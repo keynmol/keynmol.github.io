@@ -2,7 +2,7 @@
 layout: post
 title: "Data Analysis vs. Google search history"
 excerpt: "In this post we take my google web search history, process and visualise it and pray that nothing too embarrassing comes out(spoiler: it doesn't)"
-category: "data analysis"
+category: "data-analysis"
 tags: ["data science", "r", "data analysis", "python", "exhibitionism"]
 image: "search-history"
 ---
