@@ -1,0 +1,531 @@
+<!doctype html>
+<!--[if lt IE 7]><html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
+<!--[if (IE 7)&!(IEMobile)]><html class="no-js lt-ie9 lt-ie8" lang="en"><![endif]-->
+<!--[if (IE 8)&!(IEMobile)]><html class="no-js lt-ie9" lang="en"><![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en"><!--<![endif]-->
+<head>
+<meta charset="utf-8">
+<title>Data Analysis vs. Google search history &#8211; The many shades of data</title>
+<meta name="description" content="In this post we take my google web search history, process and visualise it and pray that nothing too embarrassing comes out(spoiler: it doesn't)">
+<meta name="keywords" content="data science, r, data analysis, python, exhibitionism">
+
+
+
+<!-- Twitter Cards -->
+<meta name="twitter:title" content="Data Analysis vs. Google search history">
+<meta name="twitter:description" content="In this post we take my google web search history, process and visualise it and pray that nothing too embarrassing comes out(spoiler: it doesn't)">
+<meta name="twitter:site" content="@velvetbaldmime">
+<meta name="twitter:creator" content="@velvetbaldmime">
+
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="/images/default-thumb.png">
+
+<!-- Open Graph -->
+<meta property="og:locale" content="en_GB">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Data Analysis vs. Google search history">
+<meta property="og:description" content="In this post we take my google web search history, process and visualise it and pray that nothing too embarrassing comes out(spoiler: it doesn't)">
+<meta property="og:url" content="/data%20analysis/data-analysis-vs-google-search-history/">
+<meta property="og:site_name" content="The many shades of data">
+
+<meta property="og:image" content="/images/default-thumb.png">
+
+
+
+
+
+
+<link rel="canonical" href="/data%20analysis/data-analysis-vs-google-search-history/">
+<link href="/feed.xml" type="application/atom+xml" rel="alternate" title="The many shades of data Feed">
+
+<!-- http://t.co/dKP3o1e -->
+<meta name="HandheldFriendly" content="True">
+<meta name="MobileOptimized" content="320">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+
+<meta http-equiv="cleartype" content="on">
+
+<!-- HTML5 Shiv and Media Query Support -->
+<!--[if lt IE 9]>
+	<script src="/assets/js/vendor/html5shiv.min.js"></script>
+	<script src="/assets/js/vendor/respond.min.js"></script>
+<![endif]-->
+
+<!-- Modernizr -->
+<script src="/assets/js/vendor/modernizr-2.7.1.custom.min.js"></script>
+
+<link href='//fonts.googleapis.com/css?family=PT+Sans+Narrow:400,700%7CPT+Serif:400,700,400italic' rel='stylesheet' type='text/css'>
+
+<!-- Icons -->
+<!-- 16x16 -->
+<link rel="shortcut icon" href="/favicon.ico">
+<!-- 32x32 -->
+<link rel="shortcut icon" href="/favicon.png">
+<!-- 57x57 (precomposed) for iPhone 3GS, pre-2011 iPod Touch and older Android devices -->
+<link rel="apple-touch-icon-precomposed" href="/images/apple-touch-icon-precomposed.png">
+<!-- 72x72 (precomposed) for 1st generation iPad, iPad 2 and iPad mini -->
+<link rel="apple-touch-icon-precomposed" sizes="72x72" href="/images/apple-touch-icon-72x72-precomposed.png">
+<!-- 114x114 (precomposed) for iPhone 4, 4S, 5 and post-2011 iPod Touch -->
+<link rel="apple-touch-icon-precomposed" sizes="114x114" href="/images/apple-touch-icon-114x114-precomposed.png">
+<!-- 144x144 (precomposed) for iPad 3rd and 4th generation -->
+<link rel="apple-touch-icon-precomposed" sizes="144x144" href="/images/apple-touch-icon-144x144-precomposed.png">
+
+</head>
+
+<body class="post">
+
+<!--[if lt IE 9]><div class="browser-upgrade alert alert-info">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</div><![endif]-->
+
+<div class="navigation-wrapper">
+	<div class="site-name">
+		<a href="/">The many shades of data</a>
+	</div><!-- /.site-name -->
+	<div class="top-navigation">
+		<nav role="navigation" id="site-nav" class="nav">
+		    <ul>
+		        
+				    
+				        
+				    
+				    <li><a href="/about/" >About</a></li>
+				
+				    
+				        
+				    
+				    <li><a href="/posts/" >Posts</a></li>
+				
+		    </ul>
+		</nav>
+	</div><!-- /.top-navigation -->
+</div><!-- /.navigation-wrapper -->
+
+
+
+<div id="main" role="main">
+  <div class="article-author-side">
+    
+
+
+<div itemscope itemtype="http://schema.org/Person">
+
+
+	<img src="/images/bio-photo.jpg" class="bio-photo" alt="Anton Sviridov bio photo">
+
+
+  <h3 itemprop="name">Anton Sviridov</h3>
+  <p>Aspiring data ninja</p>
+  <a href="mailto:keynmol@gmail.com" class="author-social" target="_blank"><i class="fa fa-fw fa-envelope-square"></i> Email</a>
+  <a href="http://twitter.com/velvetbaldmime" class="author-social" target="_blank"><i class="fa fa-fw fa-twitter-square"></i> Twitter</a>
+  
+  
+  
+  
+  
+  
+  <a href="http://github.com/keynmol" class="author-social" target="_blank"><i class="fa fa-fw fa-github"></i> Github</a>
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+</div>
+
+  </div>
+  <article class="post">
+    <div class="headline-wrap">
+      
+        <h1><a href="/data%20analysis/data-analysis-vs-google-search-history/" rel="bookmark" title="Data Analysis vs. Google search history">Data Analysis vs. Google search history</a></h1>
+      
+    </div><!--/ .headline-wrap -->
+    <div class="article-wrap">
+      <section id="table-of-contents" class="toc">
+  <header>
+    <h3><i class="fa fa-book"></i> Overview</h3>
+  </header>
+<div id="drawer">
+<ul id="markdown-toc">
+  <li><a href="#introduction" id="markdown-toc-introduction">Introduction</a></li>
+  <li><a href="#getting-data" id="markdown-toc-getting-data">Getting data</a></li>
+  <li><a href="#preparing-data" id="markdown-toc-preparing-data">Preparing data</a></li>
+  <li><a href="#languages-stats" id="markdown-toc-languages-stats">Languages stats</a></li>
+  <li><a href="#tokenizing-queries" id="markdown-toc-tokenizing-queries">Tokenizing queries</a></li>
+  <li><a href="#words-ranking-and-zipfs-law" id="markdown-toc-words-ranking-and-zipfs-law">Words ranking and Zipf’s law</a></li>
+  <li><a href="#trends-and-topics" id="markdown-toc-trends-and-topics">Trends and topics</a></li>
+  <li><a href="#conclusion" id="markdown-toc-conclusion">Conclusion</a></li>
+</ul>
+
+  </div>
+</section>
+<!-- /#table-of-contents -->
+
+<h2 id="introduction">Introduction</h2>
+<p>A man is defined not by the way he looks, but what he looks for. And these days it is exceptionally easy to find out, what you’re looking for – Google provides access to your search history starting from a certain point in time which is probably different for everyone(my archive started from 2011 though it goes without saying that I’ve been using Google long before that). And while in different periods of my life I have found myself googling some <strong>really weird shit</strong>(like, really weird, from the depths of underwebs), I decided to rely on the safety of large numbers and post the results of this trip down the memory lane no matter what kind of deviation they shall display.</p>
+
+<p>This doesn’t serve any scientific purpose, it’s more of a demonstration of the use of fantastic packages R can offer, applied to a dataset from a real world. This is not a tutorial on R language or aforementioned packages per se, but rather a primer of their usage in real(well, almost) world.</p>
+
+<p>It’s a well-known fact, that 70%-90% of data scientist’s time is spent shaping the data into shape needed for exploratory analysis. And whilst there’s no upper-boundary on the dirtiness of data(some things I’ve seen still keep me awake at night, especially in publicly available governmental datasets), this data will be somewhere in the bottom 10% percentile – most of the time is spent massaging the data, which is more fun than cleaning it and battling with missing values.</p>
+
+<h2 id="getting-data">Getting data</h2>
+
+<p>My previous attempt to analyse my own google searches was stumped by Google’s own malfunction during archive creation, but this time I went to <a href="https://history.google.com/history/">Web &amp; App Activity</a> and succesfully managed to download the archive. The main thing it contains is json files with queries:</p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash">2011-01-01 January <span class="m">2011</span> to March 2011.json    2012-07-01 July <span class="m">2012</span> to September 2012.json   2014-01-01 January <span class="m">2014</span> to March 2014.json
+2011-04-01 April <span class="m">2011</span> to June 2011.json       2012-10-01 October <span class="m">2012</span> to December 2012.json 2014-04-01 April <span class="m">2014</span> to June 2014.json
+2011-07-01 July <span class="m">2011</span> to September 2011.json   2013-01-01 January <span class="m">2013</span> to March 2013.json    2014-07-01 July <span class="m">2014</span> to September 2014.json
+2011-10-01 October <span class="m">2011</span> to December 2011.json 2013-04-01 April <span class="m">2013</span> to June 2013.json       2014-10-01 October <span class="m">2014</span> to December 2014.json
+2012-01-01 January <span class="m">2012</span> to March 2012.json    2013-07-01 July <span class="m">2013</span> to September 2013.json   2015-01-01 January <span class="m">2015</span> to March 2015.json
+2012-04-01 April <span class="m">2012</span> to June 2012.json       2013-10-01 October <span class="m">2013</span> to December 2013.json 2015-04-01 April <span class="m">2015</span> to June 2015.json</code></pre></div>
+
+<p>Each JSON has the same structure:</p>
+
+<div class="highlight"><pre><code class="language-json" data-lang="json"><span class="p">{</span>
+   <span class="nt">&quot;event&quot;</span> <span class="p">:</span> <span class="p">[</span>
+      <span class="p">{</span>
+         <span class="nt">&quot;query&quot;</span> <span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;id&quot;</span> <span class="p">:</span> <span class="p">[</span>
+               <span class="p">{</span>
+                  <span class="nt">&quot;timestamp_usec&quot;</span> <span class="p">:</span> <span class="s2">&quot;1325324851354700&quot;</span>
+               <span class="p">}</span>
+            <span class="p">],</span>
+            <span class="nt">&quot;query_text&quot;</span> <span class="p">:</span> <span class="s2">&quot;jonathan ross dexter&quot;</span>
+         <span class="p">}</span>
+      <span class="p">},</span>
+      <span class="p">{</span>
+         <span class="nt">&quot;query&quot;</span> <span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;query_text&quot;</span> <span class="p">:</span> <span class="s2">&quot;johnatan ross dexter&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;id&quot;</span> <span class="p">:</span> <span class="p">[</span>
+               <span class="p">{</span>
+                  <span class="nt">&quot;timestamp_usec&quot;</span> <span class="p">:</span> <span class="s2">&quot;1325324848005857&quot;</span>
+               <span class="p">}</span>
+            <span class="p">]</span>
+<span class="err">...</span></code></pre></div>
+
+<p>Timestamps are in microseconds, but we don’t need this kind of precision, so we can safely trim last 6 digits and get a regular UNIX timestamp that R can understand. Also, each query can be associated with several <code>id</code>s, each having a different timestamp – to my understanding, this groups image searches. We’ll ignore that and just take the minimum of timestamps(or we could take the first one).</p>
+
+<p>Given that the idea of working with multiple(!) JSON(!!) files(!!!) and R gives me shivers(my knowledge of available packages is probably severely outdated), I wrote a tiny Python script that converts everything into a nice flat csv dataset:</p>
+
+<div class="highlight"><pre><code class="language-python" data-lang="python"><span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">glob</span>
+<span class="kn">import</span> <span class="nn">os.path</span>
+<span class="kn">import</span> <span class="nn">csv</span>
+
+<span class="k">if</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">):</span>
+    <span class="nb">exit</span><span class="p">(</span><span class="s">&quot;Usage: create_dataset.py searches_folder&quot;</span><span class="p">)</span>
+
+<span class="n">fold</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+<span class="n">writer</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">DictWriter</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="p">,</span> <span class="n">fieldnames</span><span class="o">=</span><span class="p">[</span><span class="s">&quot;Timestamp&quot;</span><span class="p">,</span> <span class="s">&quot;Query&quot;</span><span class="p">],</span> <span class="n">quoting</span><span class="o">=</span><span class="n">csv</span><span class="o">.</span><span class="n">QUOTE_NONNUMERIC</span><span class="p">)</span>
+<span class="n">writer</span><span class="o">.</span><span class="n">writeheader</span><span class="p">()</span>
+
+<span class="c"># scan all json files in the folder</span>
+<span class="k">for</span> <span class="n">queries_file</span> <span class="ow">in</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">fold</span><span class="p">,</span> <span class="s">&quot;*.json&quot;</span><span class="p">)):</span>
+    <span class="c"># load json</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">queries_file</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">queries</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">query</span> <span class="ow">in</span> <span class="n">queries</span><span class="p">[</span><span class="s">&quot;event&quot;</span><span class="p">]:</span>
+        <span class="n">query</span><span class="o">=</span><span class="n">query</span><span class="p">[</span><span class="s">&quot;query&quot;</span><span class="p">]</span>
+        <span class="c"># extract timestamp with removed microseconds</span>
+        <span class="n">timestamp</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">query_id</span><span class="p">[</span><span class="s">&quot;timestamp_usec&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">:</span><span class="o">-</span><span class="mi">6</span><span class="p">])</span> <span class="k">for</span> <span class="n">query_id</span> <span class="ow">in</span> <span class="n">query</span><span class="p">[</span><span class="s">&quot;id&quot;</span><span class="p">])</span>
+        <span class="n">writer</span><span class="o">.</span><span class="n">writerow</span><span class="p">({</span><span class="s">&quot;Timestamp&quot;</span><span class="p">:</span> <span class="n">timestamp</span><span class="p">,</span> <span class="s">&quot;Query&quot;</span><span class="p">:</span> <span class="n">query</span><span class="p">[</span><span class="s">&quot;query_text&quot;</span><span class="p">]})</span></code></pre></div>
+
+<p>After running this script on the folder with extracted JSON files, we will have a csv file with two columns: timestamp and query. Buckle up, we’re going on an adventuR(sorry). Fire up your R console, or RStudio(if you still don’t use it, you need to stop here for a moment and rethink your life priorities).</p>
+
+<h2 id="preparing-data">Preparing data</h2>
+<p>First, let’s establish a portal to <a href="http://adolfoalvarez.cl/the-hitchhikers-guide-to-the-hadleyverse/">Hadleyverse</a>:</p>
+
+<div class="highlight"><pre><code class="language-r" data-lang="r"><span class="kn">library</span><span class="p">(</span>dplyr<span class="p">)</span> <span class="c1"># general data wrangling, tbl_df, %&gt;% operator</span>
+<span class="kn">library</span><span class="p">(</span>stringr<span class="p">)</span> <span class="c1"># query tokenization</span>
+<span class="kn">library</span><span class="p">(</span>lubridate<span class="p">)</span> <span class="c1"># could be omitted, really, but I do love it too much</span>
+<span class="kn">library</span><span class="p">(</span>ggplot<span class="p">)</span> <span class="c1"># beautiful plots</span></code></pre></div>
+
+<p>If you don’t have any of those packages, install them, they are guaranteed to transform the way you see data analysis, both in R and in general. Let’s load our dataset and have a first look at it:</p>
+
+<div class="highlight"><pre><code class="language-r" data-lang="r"><span class="c1"># immediately convert it do tbl_df for pretty printing</span>
+<span class="o">&gt;</span> ds <span class="o">&lt;-</span> tbl_df<span class="p">(</span>read.csv<span class="p">(</span><span class="s">&quot;dataset.csv&quot;</span><span class="p">,</span> stringsAsFactors <span class="o">=</span> <span class="bp">F</span><span class="p">))</span>
+<span class="c1"># convert integer timestamp to R&#39;s native datetime object(POSIXct)</span>
+<span class="o">&gt;</span> ds<span class="o">$</span>TimeStamp <span class="o">&lt;-</span> <span class="kp">as.POSIXct</span><span class="p">(</span>ds<span class="o">$</span>Timestamp<span class="p">,</span> origin <span class="o">=</span> <span class="s">&quot;1970-01-01&quot;</span><span class="p">)</span>
+
+<span class="c1"># print some rows starting from the most recent queries</span>
+<span class="o">&gt;</span> ds <span class="o">%&gt;%</span> arrange<span class="p">(</span>desc<span class="p">(</span>TimeStamp<span class="p">))</span>
+Source<span class="o">:</span> local <span class="kt">data frame</span> <span class="p">[</span><span class="m">35</span><span class="p">,</span><span class="m">328</span> x <span class="m">3</span><span class="p">]</span>
+
+    Timestamp             Query           TimeStamp
+<span class="m">1</span>  <span class="m">1433067125</span>       colourout R <span class="m">2015-05-31</span> <span class="m">11</span><span class="o">:</span><span class="m">12</span><span class="o">:</span><span class="m">05</span>
+<span class="m">2</span>  <span class="m">1433067122</span>         colourout <span class="m">2015-05-31</span> <span class="m">11</span><span class="o">:</span><span class="m">12</span><span class="o">:</span><span class="m">02</span>
+<span class="m">3</span>  <span class="m">1433023552</span>    predestination <span class="m">2015-05-30</span> <span class="m">23</span><span class="o">:</span><span class="m">05</span><span class="o">:</span><span class="m">52</span>
+<span class="m">4</span>  <span class="m">1433018900</span>       sarah snook <span class="m">2015-05-30</span> <span class="m">21</span><span class="o">:</span><span class="m">48</span><span class="o">:</span><span class="m">20</span>
+<span class="m">5</span>  <span class="m">1433018895</span>    predestination <span class="m">2015-05-30</span> <span class="m">21</span><span class="o">:</span><span class="m">48</span><span class="o">:</span><span class="m">15</span>
+<span class="m">6</span>  <span class="m">1433014242</span> focaccia di recco <span class="m">2015-05-30</span> <span class="m">20</span><span class="o">:</span><span class="m">30</span><span class="o">:</span><span class="m">42</span>
+<span class="m">7</span>  <span class="m">1433011327</span>                 н <span class="m">2015-05-30</span> <span class="m">19</span><span class="o">:</span><span class="m">42</span><span class="o">:</span><span class="m">07</span>
+<span class="m">8</span>  <span class="m">1433004348</span>          Thatcher <span class="m">2015-05-30</span> <span class="m">17</span><span class="o">:</span><span class="m">45</span><span class="o">:</span><span class="m">48</span>
+<span class="m">9</span>  <span class="m">1432997333</span>    predestination <span class="m">2015-05-30</span> <span class="m">15</span><span class="o">:</span><span class="m">48</span><span class="o">:</span><span class="m">53</span>
+<span class="m">10</span> <span class="m">1432993008</span>  weather brighton <span class="m">2015-05-30</span> <span class="m">14</span><span class="o">:</span><span class="m">36</span><span class="o">:</span><span class="m">48</span></code></pre></div>
+
+<p>I kept the original integer Timestamp to see if the conversion worked as I expected. Also, I had to reorder the data frame, but only because my oldest queries were almost exclusively in Russian, which would reduce the demonstraction power.</p>
+
+<h2 id="languages-stats">Languages stats</h2>
+<p>I decided to take a look at how the language of queries changed over time. I’ll use a very crude and inaccurate method of language detection(thankfully, Russian and English have completely different character sets), which will misfire on queries like “translate <russian word="">", of which I have a few. But too few to affect the general trend.</russian></p>
+
+<p>So let’s take a look at the code that generates the plot with <a href="http://mathworld.wolfram.com/CumulativeSum.html">cumulative sums</a> of number of queries in each language per month. This will demonstrate the power and, even more importantly, the readability of the methods, provided by Hadleyverse’s packages:</p>
+
+<div class="highlight"><pre><code class="language-r" data-lang="r"><span class="o">&gt;</span> language_usage_plot <span class="o">&lt;-</span> ds <span class="o">%&gt;%</span> 
+        <span class="c1"># we group all queries by the month and calculate the counts below in that month</span>
+        group_by<span class="p">(</span>Month<span class="o">=</span>round_date<span class="p">(</span>TimeStamp<span class="p">,</span> <span class="s">&quot;month&quot;</span><span class="p">))</span> <span class="o">%&gt;%</span>  <span class="c1"># round each timestamp to the month it falls in</span>
+        summarise<span class="p">(</span>Russian<span class="o">=</span><span class="kp">sum</span><span class="p">(</span>str_detect<span class="p">(</span>Query<span class="p">,</span> <span class="s">&quot;[а-яА-я]&quot;</span><span class="p">)),</span> <span class="c1"># count Russian queries</span>
+                  English<span class="o">=</span><span class="kp">sum</span><span class="p">(</span>str_detect<span class="p">(</span>Query<span class="p">,</span> <span class="s">&quot;[a-zA-Z]&quot;</span><span class="p">)))</span> <span class="o">%&gt;%</span> <span class="c1"># count English characters</span>
+        ungroup <span class="o">%&gt;%</span> 
+        gather<span class="p">(</span>Language<span class="p">,</span> Queries<span class="p">,</span> <span class="o">-</span>Month<span class="p">)</span> <span class="o">%&gt;%</span> <span class="c1"># see notes below</span>
+        group_by<span class="p">(</span>Language<span class="p">)</span> <span class="o">%&gt;%</span> 
+        arrange<span class="p">(</span>Month<span class="p">)</span> <span class="o">%&gt;%</span> <span class="c1"># order is important for cumsum to make sense</span>
+        mutate<span class="p">(</span><span class="s">&quot;Number of queries&quot;</span> <span class="o">=</span> <span class="kp">cumsum</span><span class="p">(</span>Queries<span class="p">))</span> <span class="o">%&gt;%</span> <span class="c1"># will sum them across months in the Language group</span>
+        ungroup <span class="o">%&gt;%</span> 
+        ggplot<span class="p">(</span>aes<span class="p">(</span>Month<span class="p">,</span> <span class="sb">`Number of queries`</span><span class="p">,</span> colour<span class="o">=</span>Language<span class="p">))</span> <span class="o">+</span> 
+          geom_line<span class="p">()</span></code></pre></div>
+
+<p>Notes:</p>
+
+<div class="highlight"><pre><code class="language-r" data-lang="r">gather<span class="p">(</span>Language<span class="p">,</span> Queries<span class="p">,</span> <span class="o">-</span>Month<span class="p">)</span></code></pre></div>
+
+<p>This is a very important step, which converts data in wide format:</p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash">Source: <span class="nb">local </span>data frame <span class="o">[</span><span class="m">54</span> x 3<span class="o">]</span>
+
+        Month Russian English
+<span class="m">1</span>  2011-01-01       <span class="m">2</span>       4
+<span class="m">2</span>  2011-02-01       <span class="m">2</span>      10
+<span class="m">3</span>  2011-03-01       <span class="m">9</span>       6
+<span class="m">4</span>  2011-04-01       <span class="m">9</span>      32
+<span class="m">5</span>  2011-05-01       <span class="m">8</span>      10</code></pre></div>
+
+<p>To data in long “molten” format:</p>
+
+<div class="highlight"><pre><code class="language-bash" data-lang="bash">Source: <span class="nb">local </span>data frame <span class="o">[</span><span class="m">108</span> x 3<span class="o">]</span>
+
+        Month Language Queries
+<span class="m">1</span>  2011-01-01  Russian       2
+<span class="m">2</span>  2011-02-01  Russian       2
+<span class="m">3</span>  2011-03-01  Russian       9
+<span class="m">4</span>  2011-04-01  Russian       9
+<span class="m">5</span>  2011-05-01  Russian       8</code></pre></div>
+
+<p>Note the doubled number of rows and different organisation of columns. This format is native to ggplot, hence the extremely simple plotting command at the end of the pipeline.</p>
+
+<p>This code produces a plot like this:</p>
+
+<p><img src="/assets/google-searches/language_stats.png" alt="Query language stats" /></p>
+
+<p>Which shows, that my transition into English culture started long before actual moving to London.</p>
+
+<h2 id="tokenizing-queries">Tokenizing queries</h2>
+
+<p>With that out of the way, let’s do something slightly more entertaining – express my life in trends and topics without defining them manually. We will use word tokens as topics. So let’s break down each query into a list of words:</p>
+
+<div class="highlight"><pre><code class="language-r" data-lang="r">words_index <span class="o">&lt;-</span> ds <span class="o">%&gt;%</span> 
+  group_by<span class="p">(</span>Query<span class="p">,</span> TimeStamp<span class="p">)</span> <span class="o">%&gt;%</span> <span class="c1"># treat repeated queries as separate entities to have more consistent counts</span>
+  do<span class="p">(</span><span class="kt">data_frame</span><span class="p">(</span>Word <span class="o">=</span> <span class="kp">tolower</span><span class="p">(</span><span class="kp">unlist</span><span class="p">(</span>str_extract_all<span class="p">(</span><span class="m">.</span><span class="o">$</span>Query<span class="p">,</span> <span class="s">&quot;([a-zA-Zа-яA-Я&#39;]+)&quot;</span><span class="p">)))))</span> <span class="o">%&gt;%</span> <span class="c1"># see notes below</span>
+  ungroup</code></pre></div>
+
+<p>The line</p>
+
+<div class="highlight"><pre><code class="language-r" data-lang="r">do<span class="p">(</span><span class="kt">data_frame</span><span class="p">(</span>Word <span class="o">=</span> <span class="kp">tolower</span><span class="p">(</span><span class="kp">unlist</span><span class="p">(</span>str_extract_all<span class="p">(</span><span class="m">.</span><span class="o">$</span>Query<span class="p">,</span> <span class="s">&quot;([a-zA-Zа-яA-Я&#39;]+)&quot;</span><span class="p">)))))</span> <span class="o">%&gt;%</span> <span class="c1"># see notes below</span></code></pre></div>
+
+<p>makes use of <a href="https://github.com/hadley/dplyr#do">dplyr’s do</a> method that provides a convenient method for running an arbitrary computation on a group of rows. In our particular case we merely extract all sequences of cyrillic and latin characters(note the apostrophe to avoid extracting “s” from “it’s” and other similar cases). Then we <a href="https://stat.ethz.ch/R-manual/R-devel/library/base/html/unlist.html">unlist</a> the nested structure to get a plain vector of words which will then be added to the modified group(with all words in lower case).</p>
+
+<p>It’s worth noting, that this operation takes a suprising amount of time(about a minute) for such a small dataset. Especially when extraction itself is rather fast:</p>
+
+<div class="highlight"><pre><code class="language-r" data-lang="r"><span class="o">&gt;</span> <span class="kp">system.time</span><span class="p">(</span>X <span class="o">&lt;-</span> <span class="kp">tolower</span><span class="p">(</span><span class="kp">unlist</span><span class="p">(</span>str_extract_all<span class="p">(</span>ds<span class="o">$</span>Query<span class="p">,</span> <span class="s">&quot;([a-zA-Zа-яA-Я&#39;]+)&quot;</span><span class="p">))))</span>
+   user  system elapsed 
+  <span class="m">1.863</span>   <span class="m">0.046</span>   <span class="m">1.935</span></code></pre></div>
+
+<p>My suspicion is that the constant reallocation of memory(we cannot predict the number of rows in the result unless we actually extract the words, that’s the catch) slows down the process. Or may be some internal unomptimized routines in dplyr. Either way, I don’t mind waiting for a minute, but I would certainly redesign this solution for a bigger dataset.</p>
+
+<p>The general rule is to create the most obvious and readable solution first, and then optimise it bit by bit, should it prove necessary.</p>
+
+<h2 id="words-ranking-and-zipfs-law">Words ranking and Zipf’s law</h2>
+
+<p>Back to words. Let’s look at the rankings:</p>
+
+<div class="highlight"><pre><code class="language-r" data-lang="r"><span class="o">&gt;</span> words_index <span class="o">%&gt;%</span> count<span class="p">(</span>Word<span class="p">)</span> <span class="o">%&gt;%</span> arrange<span class="p">(</span>desc<span class="p">(</span>n<span class="p">))</span>
+Source<span class="o">:</span> local <span class="kt">data frame</span> <span class="p">[</span><span class="m">21</span><span class="p">,</span><span class="m">390</span> x <span class="m">2</span><span class="p">]</span>
+
+     Word    n
+<span class="m">1</span>    ruby <span class="m">1055</span>
+<span class="m">2</span>     the  <span class="m">964</span>
+<span class="m">3</span>       r  <span class="m">849</span>
+<span class="m">4</span>      <span class="kr">in</span>  <span class="m">783</span>
+<span class="m">5</span>  python  <span class="m">746</span>
+<span class="m">6</span>      to  <span class="m">706</span>
+<span class="m">7</span>  london  <span class="m">686</span>
+<span class="m">8</span>      of  <span class="m">643</span>
+<span class="m">9</span>  chords  <span class="m">559</span>
+<span class="m">10</span>      a  <span class="m">404</span></code></pre></div>
+
+<p>What “the”..? Not good. Let’s filter out the stopwords. Gladly, R handles URLs better than any language:</p>
+
+<div class="highlight"><pre><code class="language-r" data-lang="r"><span class="c1"># download a list of stopwords</span>
+<span class="o">&gt;</span> stopwords <span class="o">&lt;-</span>
+<span class="kp">suppressWarnings</span><span class="p">(</span><span class="kp">readLines</span><span class="p">(</span>
+  <span class="s">&quot;http://xpo6.com/wp-content/uploads/2015/01/stop-word-list.txt&quot;</span>
+<span class="p">))</span>
+<span class="c1"># filter our index</span>
+<span class="o">&gt;</span> words_index <span class="o">&lt;-</span> words_index <span class="o">%&gt;%</span> filter<span class="p">(</span><span class="o">!</span><span class="p">(</span>Word <span class="o">%in%</span> stopwords<span class="p">))</span>
+<span class="o">&gt;</span> words_index <span class="o">%&gt;%</span> count<span class="p">(</span>Word<span class="p">)</span> <span class="o">%&gt;%</span> arrange<span class="p">(</span>desc<span class="p">(</span>n<span class="p">))</span>
+Source<span class="o">:</span> local <span class="kt">data frame</span> <span class="p">[</span><span class="m">21</span><span class="p">,</span><span class="m">157</span> x <span class="m">2</span><span class="p">]</span>
+
+     Word    n
+<span class="m">1</span>    ruby <span class="m">1055</span>
+<span class="m">2</span>       r  <span class="m">849</span>
+<span class="m">3</span>  python  <span class="m">746</span>
+<span class="m">4</span>  london  <span class="m">686</span>
+<span class="m">5</span>  chords  <span class="m">559</span>
+<span class="m">6</span>  lyrics  <span class="m">346</span>
+<span class="m">7</span>  ubuntu  <span class="m">298</span>
+<span class="m">8</span>  ggplot  <span class="m">284</span>
+<span class="m">9</span>   rails  <span class="m">257</span>
+<span class="m">10</span> oracle  <span class="m">232</span></code></pre></div>
+
+<p>Much better now. One look at the numbers suggests the kind of distribution I used to see al the time during my relatively brief experience with Information Retrieval - Zipf law. Let’s take a closer look at it:</p>
+
+<div class="highlight"><pre><code class="language-r" data-lang="r"><span class="o">&gt;</span> word_rank_plot <span class="o">&lt;-</span> words_index <span class="o">%&gt;%</span> 
+    count<span class="p">(</span>Word<span class="p">)</span> <span class="o">%&gt;%</span> <span class="c1"># see code above</span>
+    top_n<span class="p">(</span><span class="m">100</span><span class="p">,</span> n<span class="p">)</span> <span class="o">%&gt;%</span> <span class="c1"># take top 100 words</span>
+    ggplot<span class="p">(</span>aes<span class="p">(</span>dense_rank<span class="p">(</span><span class="o">-</span>n<span class="p">),</span> n<span class="p">))</span> <span class="o">+</span> <span class="c1"># we use dense_rank(-n) to get rank(possibly repeated) for each word</span>
+      geom_line<span class="p">()</span> <span class="o">+</span> xlab<span class="p">(</span><span class="s">&quot;Word rank&quot;</span><span class="p">)</span> <span class="o">+</span>
+      ylab<span class="p">(</span><span class="s">&quot;Number of queries&quot;</span><span class="p">)</span> <span class="o">+</span>
+      scale_x_continuous<span class="p">(</span>breaks <span class="o">=</span> <span class="kp">seq</span><span class="p">(</span><span class="m">0</span><span class="p">,</span> <span class="m">100</span><span class="p">,</span> by <span class="o">=</span> <span class="m">5</span><span class="p">))</span> <span class="o">+</span>
+      geom_text<span class="p">(</span>aes<span class="p">(</span>
+        label <span class="o">=</span> Word<span class="p">,</span> 
+        alpha <span class="o">=</span> <span class="kp">log</span><span class="p">(</span><span class="m">100</span> <span class="o">/</span> dense_rank<span class="p">(</span><span class="o">-</span>n<span class="p">)),</span> 
+        hjust <span class="o">=</span> <span class="m">-0.8</span> <span class="c1"># log to make colour fade slower</span>
+      <span class="p">),</span> show_guide <span class="o">=</span> <span class="bp">F</span><span class="p">)</span> <span class="o">+</span> <span class="c1"># don&#39;t show legend for alpha</span>
+      geom_point<span class="p">()</span> <span class="o">+</span> 
+      ggtitle<span class="p">(</span><span class="s">&quot;Word rank&quot;</span><span class="p">)</span></code></pre></div>
+
+<p>This is a relatively simple plot that doesn’t use too many of the ideas we haven’t used before. And this is what it looks like:</p>
+
+<p><img src="/assets/google-searches/word-ranks.png" alt="Words ranking and Zipf's law" /></p>
+
+<p>Just as suspected! This looks like a perfect example of <a href="http://en.wikipedia.org/wiki/Zipf%27s_law">Zipf’s law</a>, the kind of plot you usually see in the books(or log-log plot, but it’s boring).</p>
+
+<p>The interesting thing about this finding is that even on such small dataset with short queries, the law, which is supposed to hold for English language, still shines through. Even though “the” is only in second place - but this can be easily explained by the fact that any person familiar with how search engines work will usually omit this and other stopwords from the query as they bear little or no significance on results(with exceptions, for example “the who” vs. “who”).</p>
+
+<h2 id="trends-and-topics">Trends and topics</h2>
+
+<p>Now, let’s do slightly more plotting - I have a sucpicion that the changes in my development stack were greatly affected by two events – moving to London to study and getting a job there a year later. I will demonstrate that change in the best way possible(subjective, of course), and then explain why those changes happened. But you can safely skip the explanation if you’re not interested in my life. There is no quiz at the end, don’t worry. Or is there?</p>
+
+<p>We will take six of the top ranking words and plot their usage over time, identifying a couple of notable dates(guess what I’m going to call this variable). First, notable dates and top words:</p>
+
+<div class="highlight"><pre><code class="language-r" data-lang="r"><span class="c1"># did you guess right?</span>
+notable_dates <span class="o">&lt;-</span> <span class="kt">data_frame</span><span class="p">(</span>NotableDate <span class="o">=</span> <span class="kt">c</span><span class="p">(</span>ymd<span class="p">(</span><span class="s">&quot;2013-09-16&quot;</span><span class="p">),</span> ymd<span class="p">(</span><span class="s">&quot;2014-09-01&quot;</span><span class="p">)),</span> 
+                            WhyNotable <span class="o">=</span> <span class="kt">c</span><span class="p">(</span><span class="s">&quot;Moved to London&quot;</span><span class="p">,</span> <span class="s">&quot;Started new job&quot;</span><span class="p">))</span>
+<span class="c1"># getting top 6 words, see notes below</span>
+top_words <span class="o">&lt;-</span> words_index <span class="o">%&gt;%</span> count<span class="p">(</span>Word<span class="p">)</span> <span class="o">%&gt;%</span> top_n<span class="p">(</span><span class="m">6</span><span class="p">,</span> n<span class="p">)</span> <span class="o">%&gt;%</span> <span class="m">.</span><span class="o">$</span>Word</code></pre></div>
+
+<p>The most interesting thing about the last line is <code>.$Word</code> - which is my personal favourite for extracting one column from the result of dplyr’s pipeline. As you might have seen above, <code>.</code> has a special meaning in dplyr’s pipeline - it represents data frame of current group. Without grouping it contains the entire dataset, and we use familiar <code>$</code> to get one column from it.</p>
+
+<p>Next, to the plot itself. It’s not complicated at all, most of the lines are actually for customisation purposes:</p>
+
+<div class="highlight"><pre><code class="language-r" data-lang="r">notable_dates_plot <span class="o">&lt;-</span> words_index <span class="o">%&gt;%</span>
+  filter<span class="p">(</span>Word <span class="o">%in%</span> top_words<span class="p">)</span> <span class="o">%&gt;%</span>
+  ggplot<span class="p">(</span>aes<span class="p">(</span>TimeStamp<span class="p">,</span> fill <span class="o">=</span> Word<span class="p">))</span> <span class="o">+</span>
+  geom_vline<span class="p">(</span>aes<span class="p">(</span>xintercept <span class="o">=</span> <span class="kp">as.numeric</span><span class="p">(</span>NotableDate<span class="p">),</span> <span class="c1"># see notes below</span>
+                 colour <span class="o">=</span> WhyNotable<span class="p">),</span> 
+             size <span class="o">=</span> <span class="m">2</span><span class="p">,</span> show_guide <span class="o">=</span> <span class="bp">T</span><span class="p">,</span> 
+             notable_dates<span class="p">)</span> <span class="o">+</span>
+  geom_histogram<span class="p">(</span>colour <span class="o">=</span> <span class="s">&quot;gray0&quot;</span><span class="p">)</span> <span class="o">+</span>
+  facet_wrap<span class="p">(</span><span class="o">~</span>Word<span class="p">,</span> scales <span class="o">=</span> <span class="s">&quot;free_y&quot;</span><span class="p">)</span> <span class="o">+</span>
+  scale_x_datetime<span class="p">(</span><span class="s">&quot;Date&quot;</span><span class="p">,</span> breaks <span class="o">=</span> date_breaks<span class="p">(</span><span class="s">&quot;6 months&quot;</span><span class="p">),</span> <span class="c1"># thanks to &quot;scales&quot; package, we can use those amazing helpers</span>
+                   labels<span class="o">=</span>date_format<span class="p">(</span><span class="s">&quot;%b, %Y&quot;</span><span class="p">))</span> <span class="o">+</span> 
+  scale_fill_discrete<span class="p">(</span><span class="s">&quot;Word&quot;</span><span class="p">)</span> <span class="o">+</span>
+  scale_colour_manual<span class="p">(</span><span class="s">&quot;Notable dates&quot;</span><span class="p">,</span> values <span class="o">=</span> <span class="kt">c</span><span class="p">(</span><span class="s">&quot;red&quot;</span><span class="p">,</span> <span class="s">&quot;orange&quot;</span><span class="p">))</span> <span class="o">+</span>
+  ylab<span class="p">(</span><span class="s">&quot;Number of queries&quot;</span><span class="p">)</span> <span class="o">+</span>
+  theme<span class="p">(</span>axis.text.x<span class="o">=</span>element_text<span class="p">(</span>angle<span class="o">=</span><span class="m">45</span><span class="p">),</span> <span class="c1"># see ggplot&#39;s help pages for information about theme&#39;s parameters</span>
+        legend.text<span class="o">=</span>element_text<span class="p">(</span>size<span class="o">=</span><span class="m">14</span><span class="p">),</span> 
+        strip.text<span class="o">=</span>element_text<span class="p">(</span>size<span class="o">=</span><span class="m">14</span><span class="p">))</span> <span class="o">+</span></code></pre></div>
+
+<p>The peculiar construct in <code>geom_vline</code>, <code>xintercept = as.numeric(NotableDate)</code> is required because internally time objects are represented as integers, therefore ggplot will expect xintercept to be of the same type, as the underlying scale. I find this feature(or bug) somewhat annoying, as I always forget the reason for the error message it produces.</p>
+
+<p>We don’t do much sophisticated processing here, instead we try to arrange the information on the plot in condensed manner, but so it still shows the underlying patterns in data.</p>
+
+<p><img src="/assets/google-searches/top-usage.png" alt="Top terms usage" /></p>
+
+<p>And here it is. The year between moving to London and starting a job was the year I was getting my Master’s degree.</p>
+
+<h2 id="conclusion">Conclusion</h2>
+
+<p>Personal notes(the ones you can actually skip):</p>
+
+<ol>
+  <li>Increasing usage of Python right before getting a job(my MSc project was about neural networks and all the simulations were done in Python, there was only 5 days between submission and starting the job).</li>
+  <li>Drop in Ruby usage until right before submitting the paper – it’s in this time that I wrote(and abandoned) <a href="https://github.com/keynmol/octane">octane</a> to aid me in visualising what the hell was going on in those bloody neural networks. Before moving to London Ruby was my main go-to language and a centerpiece of my work stack.</li>
+  <li>Increased interest in London right after getting the job - more money meant more entertainment opportunities.</li>
+  <li>Interestingly similar patterns in “chords” and “lyrics” over the months spent at university. I guess there was too much drinking going on in the beginning, and then too much writing at the end.</li>
+</ol>
+
+<p>Thanks for getting this far!</p>
+
+<p>The code for producing all of those plots is available on <a href="https://github.com/keynmol/keynmol.github.io/tree/master/code/google-searches/">blog’s github</a>, just feed it your own data and it probably won’t explode(I take no responsbility, but you can <a href="&#109;&#097;&#105;&#108;&#116;&#111;:&#107;&#101;&#121;&#110;&#109;&#111;&#108;&#064;&#103;&#109;&#097;&#105;&#108;&#046;&#099;&#111;&#109;">email me</a>)</p>
+
+      <hr />
+      <footer role="contentinfo">
+        <div class="social-share">
+  <h4>Share on</h4>
+  <ul>
+    <li>
+      <a href="https://twitter.com/intent/tweet?text=/data%20analysis/data-analysis-vs-google-search-history/" class="twitter" title="Share on Twitter"><i class="fa fa-twitter"></i><span> Twitter</span></a>
+    </li>
+    <li>
+      <a href="https://www.facebook.com/sharer/sharer.php?u=/data%20analysis/data-analysis-vs-google-search-history/" class="facebook" title="Share on Facebook"><i class="fa fa-facebook"></i><span> Facebook</span></a>
+    </li>
+    <li>
+      <a href="https://plus.google.com/share?url=/data%20analysis/data-analysis-vs-google-search-history/" class="google-plus" title="Share on Google Plus"><i class="fa fa-google-plus"></i><span> Google+</span></a>
+    </li>
+  </ul>
+</div><!-- /.social-share -->
+        <p class="byline"><strong>Data Analysis vs. Google search history</strong> was published on <time datetime="2015-05-31T00:00:00+01:00">May 31, 2015</time>.</p>
+      </footer>
+    </div><!-- /.article-wrap -->
+  
+  </article>
+</div><!-- /#main -->
+
+<div class="footer-wrap">
+  
+  <div class="related-articles">
+  <h4>You might also enjoy <small class="pull-right">(<a href="/posts/">View all posts</a>)</small></h4>
+    <ul>
+    
+      <li><a href="/dataviz/visualising-real-world-timeseries/" title="Visualising timeseries: stocks data and global trends">Visualising timeseries: stocks data and global trends</a></li>
+    
+    </ul>
+    <hr />
+  </div><!-- /.related-articles -->
+  
+  <footer>
+    
+
+<span>&copy; 2015 Anton Sviridov. Powered by <a href="http://jekyllrb.com" rel="nofollow">Jekyll</a> using the <a href="http://mademistakes.com/minimal-mistakes/" rel="nofollow">Minimal Mistakes</a> theme.</span>
+
+  </footer>
+</div><!-- /.footer-wrap -->
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script>window.jQuery || document.write('<script src="/assets/js/vendor/jquery-1.9.1.min.js"><\/script>')</script>
+<script src="/assets/js/scripts.min.js"></script>
+
+
+
+
+</body>
+</html>
