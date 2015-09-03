@@ -5,6 +5,7 @@ excerpt: "In this post we take my google web search history, process and visuali
 category: "data-analysis"
 tags: ["data science", "r", "data analysis", "python", "exhibitionism"]
 image: "search-history"
+comments: true
 ---
 
 {% include _toc.html %}

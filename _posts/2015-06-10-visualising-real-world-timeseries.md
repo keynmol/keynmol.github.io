@@ -5,6 +5,7 @@ excerpt: "A primer on dealing with mixtures of time-series and visualising them 
 category: "dataviz"
 tags: ["data visualisation", "data analysis", "R", "ggplot2", "stocks"]
 image: "viz-stock-data"
+comments: true
 ---
 
 {% include _toc.html %}
