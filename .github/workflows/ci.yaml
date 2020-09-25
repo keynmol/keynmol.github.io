@@ -23,7 +23,7 @@ jobs:
       - name: Push to gh-pages
         run: |
           git config user.email 'subatomic_bot@users.noreply.github.com'
-          git config user.name 'subatomic_bot'"
+          git config user.name 'subatomic_bot'
           git remote add gh-token "https://${{secrets.GITHUB_TOKEN}}@github.com/indoorvivants/subatomic.git"
           cd _site
           git add --all
