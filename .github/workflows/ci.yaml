@@ -12,21 +12,10 @@ jobs:
         with:
           ammonite-version: 2.2.0
           scala-version: 2.13
-      - name: Pre-clean
-        run: rm -rf _site
-      - name: Setup worktree
-        run: git worktree add -B gh-pages _site refs/remotes/origin/gh-pages
       - name: Build
         run: amm blog.sc
-      - name: Test generated
-        run: ls -al _site
-      - name: Push to gh-pages
-        run: |
-          git config user.email 'subatomic_bot@users.noreply.github.com'
-          git config user.name 'subatomic_bot'
-          git remote add gh-token "https://${{secrets.GITHUB_TOKEN}}@github.com/$GITHUB_REPOSITORY"
-          cd _site
-          git add --all
-          (git diff-index --quiet HEAD || git commit -m 'Publishing to gh-pages')
-          cd ..
-          git push gh-token gh-pages
+      - name: Publish gh-pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./_site
