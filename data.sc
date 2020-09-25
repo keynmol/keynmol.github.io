@@ -1,6 +1,6 @@
 // ----- Data models for content
 sealed trait Tag
-case object Scala extends Tag
+case object Scala                                extends Tag
 case class ScalaMdoc(dependencies: List[String]) extends Tag
 case class tg(s: String) extends Tag {
   override def toString = s
@@ -18,7 +18,7 @@ case class BlogPost(
 }
 
 case class MarkdownPage(title: String, file: os.Path) extends Content
-case class StaticFile(file: os.Path) extends Content
+case class StaticFile(file: os.Path)                  extends Content
 
 // an extractor to help identify mdoc-based posts
 object MdocBlogPost {
@@ -36,8 +36,8 @@ object MdocBlogPost {
 
 //------- Data models for the site
 
-type Title = String
-type URL = String
+type Title    = String
+type URL      = String
 type Selected = Boolean
 case class Navigation(links: List[(Title, URL, Selected)])
 
@@ -84,7 +84,10 @@ def pages(SiteRoot: os.RelPath, ContentRoot: os.Path) =
 
 def statics(SiteRoot: os.RelPath, ContentRoot: os.Path) = {
   os.walk(ContentRoot / "assets").map { path =>
-    SiteRoot / path.relativeTo(ContentRoot) -> StaticFile(path)
+    if (path.endsWith(os.RelPath("CNAME")))
+      SiteRoot / "CNAME" -> StaticFile(path)
+    else
+      SiteRoot / path.relativeTo(ContentRoot) -> StaticFile(path)
   }
 }
 
