@@ -1,0 +1,18 @@
+name: CI
+on: [push, pull_request]
+
+jobs:
+  build:
+    strategy:
+      fail-fast: true
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - uses: yilinwei/setup-ammonite@master
+        with:
+          ammonite-version: 2.2.0
+          scala-version: 2.13
+      - name: Build
+        run: amm blog.sc
+      - name: Test generated
+        run: ls -al _site
