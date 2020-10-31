@@ -1,88 +1,110 @@
-// ----- Data models for content
-sealed trait Tag
-case object Scala                                extends Tag
-case class ScalaMdoc(dependencies: List[String]) extends Tag
-case class tg(s: String) extends Tag {
-  override def toString = s
-}
+import $ivy.`com.indoorvivants::subatomic:0.0.3`
 
-sealed trait Content
+import com.indoorvivants.subatomic._
+import java.time.LocalDate
+
+// ----- Data models for content
+case class BlogTag(tag: String)
+
+sealed trait Content extends Product with Serializable
 case class BlogPost(
     title: String,
-    slug: String,
-    tags: Set[Tag] = Set.empty
-) extends Content {
-  def file(wd: os.Path): os.Path = {
-    wd / "content" / "blog" / s"$slug.md"
-  }
-}
+    tags: Set[BlogTag],
+    date: LocalDate,
+    content: Text,
+    description: String = ""
+)                                                             extends Content
+case class SitePage(title: String, content: MarkdownText)     extends Content
+case class StaticFile(file: os.Path)                          extends Content
+case class TagPage(tag: BlogTag, blogPosts: Vector[BlogPost]) extends Content
+case class IndexPage(blogs: Vector[BlogPost])                 extends Content
 
-case class MarkdownPage(title: String, file: os.Path) extends Content
-case class StaticFile(file: os.Path)                  extends Content
-
-// an extractor to help identify mdoc-based posts
-object MdocBlogPost {
-
-  def unapply(c: Content): Option[(BlogPost, ScalaMdoc)] = {
-    c match {
-      case bp: BlogPost =>
-        bp.tags.collectFirst {
-          case sm: ScalaMdoc => bp -> sm
-        }
-      case _ => None
-    }
-  }
-}
+sealed trait Text extends Product with Serializable
+case class MdocText(file: os.Path, dependencies: Set[String] = Set.empty)
+    extends Text
+case class MarkdownText(file: os.Path) extends Text
 
 //------- Data models for the site
 
 type Title    = String
 type URL      = String
 type Selected = Boolean
-case class Navigation(links: List[(Title, URL, Selected)])
+case class Navigation(items: Seq[Navigation.Item])
+object Navigation {
+  case class Item(title: String, url: String, selected: Boolean)
+
+  def state(
+      linker: Linker,
+      content: Vector[(SitePath, Content)]
+  ): (SitePath, Content) => Navigation = { (_, currentContent) =>
+    val items = content.collect {
+      case (path, bp: BlogPost) =>
+        Navigation.Item(
+          bp.title,
+          linker.rooted(_ / path.toRelPath),
+          currentContent == bp
+        )
+    }
+
+    Navigation(items)
+  }
+}
 
 //------ Content itself
 
-def blogs(SiteRoot: os.RelPath, ContentRoot: os.Path) =
-  Vector(
-    BlogPost(
-      "Google search history analysis",
-      "google-search-history-analysis",
-      tags = Set(
-        tg("R"),
-        tg("python"),
-        tg("data-analysis"),
-        tg("stocks"),
-        tg("ggplot2")
-      )
+def blogs(ContentRoot: os.Path): Vector[(SitePath, BlogPost)] = {
+  // Vector[BlogPost](
+  val googleSearchHistory = BlogPost(
+    "Google search history analysis",
+    tags = Set(
+      BlogTag("R"),
+      BlogTag("python"),
+      BlogTag("data-analysis"),
+      BlogTag("stocks"),
+      BlogTag("ggplot2")
     ),
-    BlogPost(
-      "Visualising timeseries: stocks data and global trends",
-      "visualising-real-world-time-series",
-      tags = Set(tg("R"), tg("python"), tg("data-analysis"))
-    ),
-    BlogPost(
-      "Test mdoc blog",
-      "test-mdoc",
-      tags = Set(Scala, ScalaMdoc(List("org.typelevel::cats-effect:2.1.4")))
-    )
-  ).map { blogPost =>
-    SiteRoot / "blog" / s"${blogPost.slug}.html" -> blogPost
-  }
+    date = LocalDate.of(2015, 5, 31),
+    content =
+      MarkdownText(ContentRoot / "blog" / "google-search-history-analysis.md")
+  )
 
-def pages(SiteRoot: os.RelPath, ContentRoot: os.Path) =
-  Vector(
-    SiteRoot / "index.html" -> MarkdownPage(
-      "Home",
-      ContentRoot / "content" / "pages" / "index.md"
+  val visualisingTimeSeries = BlogPost(
+    "Visualising timeseries: stocks data and global trends",
+    tags = Set(
+      BlogTag("R"),
+      BlogTag("python"),
+      BlogTag("data-analysis"),
+      BlogTag("ggplot2")
     ),
-    SiteRoot / "cv.html" -> MarkdownPage(
-      "CV",
-      ContentRoot / "content" / "pages" / "cv.md"
+    date = LocalDate.of(2015, 6, 10),
+    content = MarkdownText(
+      ContentRoot / "blog" / "visualising-real-world-time-series.md"
     )
   )
 
-def statics(SiteRoot: os.RelPath, ContentRoot: os.Path) = {
+  val testMdoc = BlogPost(
+    "Test mdoc blog",
+    tags = Set(BlogTag("scala")),
+    date = LocalDate.now(),
+    content = MdocText(
+      ContentRoot / "blog" / "test-mdoc.md",
+      dependencies = Set("org.typelevel::cats-effect:2.1.4")
+    )
+  )
+
+  Vector(
+    SiteRoot / "blog" / "visualising-time-series.html"        -> visualisingTimeSeries,
+    SiteRoot / "blog" / "google-search-history-analysis.html" -> googleSearchHistory,
+    SiteRoot / "blog" / "test-mdoc.html"                      -> testMdoc
+  )
+}
+
+def pages(blogs: Vector[(SitePath, BlogPost)]) =
+  Vector(
+    SiteRoot / "index.html" -> IndexPage(blogs.map(_._2))
+  )
+
+def statics(ContentRoot: os.Path) = {
   os.walk(ContentRoot / "assets").map { path =>
     if (path.endsWith(os.RelPath("CNAME")))
       SiteRoot / "CNAME" -> StaticFile(path)
@@ -91,8 +113,24 @@ def statics(SiteRoot: os.RelPath, ContentRoot: os.Path) = {
   }
 }
 
-def Content(SiteRoot: os.RelPath, ContentRoot: os.Path) =
-  blogs(SiteRoot, ContentRoot) ++ pages(SiteRoot, ContentRoot) ++ statics(
-    SiteRoot,
-    ContentRoot
-  )
+def tagPages(blogs: Vector[(SitePath, Content)]) = {
+  val blogposts: Vector[(SitePath, BlogPost)] = blogs.collect {
+    case (path, bp: BlogPost) => path -> bp
+  }
+
+  val uniqueTags = blogposts.flatMap(_._2.tags)
+
+  uniqueTags.toVector.sortBy(_.tag).map { tag =>
+    val contentWithTag = blogposts.map(_._2).filter(_.tags.contains(tag))
+
+    SiteRoot / "tags" / s"${tag.tag}.html" ->
+      TagPage(tag, contentWithTag)
+  }
+
+}
+
+def Content(ContentRoot: os.Path): Vector[(SitePath, Content)] =
+  blogs(ContentRoot) ++
+    pages(blogs(ContentRoot)) ++
+    statics(ContentRoot) ++
+    tagPages(blogs(ContentRoot))

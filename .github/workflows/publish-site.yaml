@@ -1,5 +1,8 @@
-name: Build site
-on: [push, pull_request]
+name: Publish site
+
+on:
+  push:
+    branches: [master]
 
 jobs:
   build:
@@ -14,3 +17,8 @@ jobs:
           scala-version: 2.13
       - name: Build
         run: amm blog.sc
+      - name: Publish gh-pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./_site

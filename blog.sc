@@ -1,4 +1,4 @@
-import $ivy.`com.indoorvivants::subatomic:0.0.1`
+import $ivy.`com.indoorvivants::subatomic:0.0.3`
 import $file.template
 import $file.data
 
@@ -6,79 +6,115 @@ import com.indoorvivants.subatomic._
 import template.Template
 import data._
 
-// How sidebar navigation should behave depending on the page
-def NavigationState(
-    content: Vector[(os.RelPath, Content)]
-): Function2[os.RelPath, Content, Navigation] = {
-  val titles = content.collect {
-    case (rp, BlogPost(title, file, tags)) =>
-      rp.toString() -> ("Blog: " + title)
-    case (rp, MarkdownPage(title, file)) => rp.toString() -> title
-  }.toList
+@main
+def main(
+    disableMdoc: Boolean = false,
+    destination: os.Path = os.pwd / "_site"
+) = {
+  interp.watch(os.pwd / "content")
 
-  val titlePlusContent: List[((Title, URL), Content)] =
-    titles.zip(content.map(_._2))
-
-  (relPath, content) => {
-    Navigation(titlePlusContent.map {
-      case ((rp, contentTitle), c) =>
-        (contentTitle, "/" + rp.toString, content == c)
-    })
-  }
+  buildSite(
+    contentRoot = os.pwd / "content",
+    siteBase = SiteRoot,
+    destination = os.pwd / "_site",
+    disableMdoc = disableMdoc
+  )
 }
 
 // Actually putting everything together
-def buildSite(pwd: os.Path, siteBase: os.RelPath, destination: os.Path) = {
-  val mdocProc = new MdocProcessor()
+def buildSite(
+    contentRoot: os.Path,
+    siteBase: SitePath,
+    destination: os.Path,
+    disableMdoc: Boolean
+) = {
+  val content = Content(contentRoot)
+  val linker  = new Linker(content, siteBase)
 
-  val content = Content(SiteRoot = siteBase, ContentRoot = pwd)
+  val mdocProc = new MdocProcessor()
+  val markdown = Markdown(RelativizeLinksExtension(siteBase))
+
+  val template = new Template(
+    linker,
+    content
+      .map(_._2)
+      .collect {
+        case tg: TagPage => tg
+      }
+      .toSet
+  )
 
   ammonite.ops.rm(destination)
   os.makeDir.all(destination)
 
+  def processMdoc(path: os.Path, deps: Set[String]) = {
+    if (disableMdoc) path else mdocProc.process(path, deps)
+  }
+
   Site.build1[Content, Navigation](destination)(
     content,
-    NavigationState(content)
+    Navigation.state(linker, content)
   ) {
     // Rendering a mdoc-based post is a bit more involved
-    case (_, MdocBlogPost(bp, sm @ ScalaMdoc(deps)), navigation) =>
-      Page(
-        Template
-          .BlogPage(
-            navigation,
-            bp.title,
-            bp.tags.filter(_ != sm).map(_.toString()),
-            Template.RawHTML(
-              Markdown.renderToString(mdocProc.process(pwd, bp.file(pwd), deps))
-            )
-          )
-          .render
-      )
+    case (_, bp: BlogPost, navigation) =>
+      val markdownContent = bp.content match {
+        case MarkdownText(file)   => file
+        case MdocText(file, deps) => processMdoc(file, deps)
+      }
 
-    // Rendering non-mdoc-based posts is simpler
-    case (_, bp @ BlogPost(title, _, tags), navigation) =>
-      Page(
-        Template
-          .BlogPage(
-            navigation,
-            title,
-            tags.map(_.toString()),
-            Template.RawHTML(Markdown.renderToString(bp.file(pwd)))
-          )
-          .render
+      Some(
+        Page(
+          template
+            .blogPage(
+              navigation,
+              bp.title,
+              bp.tags.map(_.tag),
+              template.rawHtml(
+                markdown.renderToString(markdownContent)
+              )
+            )
+            .render
+        )
       )
 
     // Rendering regular pages is even simpler
-    case (_, MarkdownPage(title, file), navigation) =>
-      Page(
-        Template
-          .Page(navigation, Template.RawHTML(Markdown.renderToString(file)))
-          .render
+    case (_, SitePage(title, content), navigation) =>
+      Some(
+        Page(
+          template
+            .page(
+              navigation,
+              template.rawHtml(markdown.renderToString(content.file))
+            )
+            .render
+        )
+      )
+
+    case (_, TagPage(tag, blogPosts), navigation) =>
+      Some(
+        Page(
+          template
+            .tagPage(
+              navigation,
+              tag,
+              blogPosts
+            )
+            .render
+        )
+      )
+    case (_, IndexPage(blogs), navigation) =>
+      Some(
+        Page(
+          template
+            .indexPage(
+              navigation,
+              blogs
+            )
+            .render
+        )
       )
 
     case (_, sf: StaticFile, _) =>
-      CopyFile(sf.file)
+      Some(CopyOf(sf.file))
   }
 }
-
-buildSite(os.pwd, os.RelPath("."), os.pwd / "_site")

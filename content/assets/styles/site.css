@@ -1,0 +1,26 @@
+span.blog-tag {
+    margin: 3px;
+    background-color: #d6d6d6;
+    padding: 6px;
+    color: black;
+    border-width: 1px 1px 1px 5px;
+    border-color: black;
+    border-style: solid;
+    display: inline-block;
+}
+
+span.blog-tag a {
+    color: black;
+}
+
+div.static-nav {
+    margin-bottom: 10px;
+}
+
+div.about {
+    text-align: right;
+}
+
+img {
+    max-width: 100%;
+}
