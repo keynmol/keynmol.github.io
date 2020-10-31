@@ -82,20 +82,9 @@ def blogs(ContentRoot: os.Path): Vector[(SitePath, BlogPost)] = {
     )
   )
 
-  val testMdoc = BlogPost(
-    "Test mdoc blog",
-    tags = Set(BlogTag("scala")),
-    date = LocalDate.now(),
-    content = MdocText(
-      ContentRoot / "blog" / "test-mdoc.md",
-      dependencies = Set("org.typelevel::cats-effect:2.1.4")
-    )
-  )
-
   Vector(
     SiteRoot / "blog" / "visualising-time-series.html"        -> visualisingTimeSeries,
-    SiteRoot / "blog" / "google-search-history-analysis.html" -> googleSearchHistory,
-    SiteRoot / "blog" / "test-mdoc.html"                      -> testMdoc
+    SiteRoot / "blog" / "google-search-history-analysis.html" -> googleSearchHistory
   )
 }
 
