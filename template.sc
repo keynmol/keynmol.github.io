@@ -33,7 +33,11 @@ class Template(linker: Linker, tags: Iterable[TagPage]) {
     script(src := linker.rooted(_ / "assets" / "scripts" / name))
 
   def basePage(navigation: Option[Navigation], content: TypedTag[_]) = {
-    val pageTitle = navigation.flatMap(_.items.find(_.selected)).map(_.title).map(": " + _).getOrElse("")
+    val pageTitle = navigation
+      .flatMap(_.items.find(_.selected))
+      .map(_.title)
+      .map(": " + _)
+      .getOrElse("")
     html(
       head(
         scalatags.Text.tags2.title("Anton Sviridov" + pageTitle),
@@ -48,33 +52,28 @@ class Template(linker: Linker, tags: Iterable[TagPage]) {
       ),
       body(
         div(
-          cls := "d-flex justify-content-center",
+          cls := "d-flex justify-content-center flex-fill flex-grow",
           div(
             cls := "container",
-            style := "margin: 50px",
             div(
               cls := "row",
               div(
-                cls := "col-5",
-                h1(a(href := linker.root, "Indoor Vivants"))
-              )
-            ),
-            hr,
-            div(
-              cls := "row",
-              div(
-                cls := "col-3",
+                cls := "col-3 sidebar",
+                h2(a(href := linker.root, "Indoor Vivants")),
+                hr,
                 about,
                 staticNav,
+                h4("projects"),
                 projectsNav,
                 hr,
+                h4("tags"),
                 tagCloud(tags),
                 navigation match {
-                  case Some(value) => div(hr, Nav(value))
+                  case Some(value) => div(hr, h4("posts"), Nav(value))
                   case None        => div()
                 }
               ),
-              div(cls := "col-8", content)
+              div(cls := "col-8 contentside", content)
             )
           )
         )
@@ -131,10 +130,7 @@ class Template(linker: Linker, tags: Iterable[TagPage]) {
   ) = {
     div(
       tagPages.toList.map { tagPage =>
-        span(
-          cls := "blog-tag",
-          a(href := linker.resolve(tagPage), small(tagPage.tag.tag))
-        )
+        span(a(href := linker.resolve(tagPage), small(tagPage.tag.tag)), " ")
       }
     )
   }
@@ -193,25 +189,24 @@ class Template(linker: Linker, tags: Iterable[TagPage]) {
     )
 
   def staticNav =
-    div(
-      cls := "static-nav",
-      a(
-        cls := "btn btn-primary",
-        href := "https://github.com/keynmol/",
-        "Github (personal)"
+    ul(
+      li(
+        a(
+          href := "https://github.com/keynmol/",
+          "Github (personal)"
+        )
       ),
-      " ",
-      a(
-        cls := "btn btn-primary",
-        href := "https://twitter.com/velvetbaldmime/",
-        "Tweettor"
+      li(
+        a(
+          href := "https://twitter.com/velvetbaldmime/",
+          "Tweettor"
+        )
       )
     )
 
   def projectsNav =
     div(
       a(
-        cls := "btn btn-sm btn-dark",
         "Subatomic - static site generator",
         href := "https://subatomic.indoorvivants.com/"
       )

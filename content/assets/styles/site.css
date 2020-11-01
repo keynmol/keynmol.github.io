@@ -1,3 +1,5 @@
+/* https://coolors.co/0a0908-22333b-eae0d5-c6ac8f-5e503f */
+
 span.blog-tag {
     margin: 3px;
     background-color: #d6d6d6;
@@ -9,9 +11,13 @@ span.blog-tag {
     display: inline-block;
 }
 
-span.blog-tag a {
+span.blog-tag>a {
     color: black;
 }
+span.blog-tag>a:hover {
+    color: black;
+}
+
 
 div.static-nav {
     margin-bottom: 10px;
@@ -23,4 +29,30 @@ div.about {
 
 img {
     max-width: 100%;
+}
+
+body {
+    background-color: #22333b;
+}
+
+div.sidebar {
+    padding-top:30px;
+    color: #c6ac8F;
+    height: 100%;
+}
+
+div.sidebar a {
+    color: #eae0d5;
+
+}
+
+div.sidebar a:hover {
+    color: #eae0d5;
+}
+
+
+div.contentside {
+    background-color: #eae0d5;
+    padding-top: 30px;
+    height:100%;
 }
