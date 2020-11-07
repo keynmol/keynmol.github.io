@@ -42,40 +42,37 @@ class Template(linker: Linker, tags: Iterable[TagPage]) {
       head(
         scalatags.Text.tags2.title("Anton Sviridov" + pageTitle),
         stylesheet("monokai-sublime.min.css"),
-        stylesheet("bootstrap.min.css"),
         stylesheet("site.css"),
         scriptFile("highlight.min.js"),
         scriptFile("r.min.js"),
         scriptFile("scala.min.js"),
         scriptFile("blog.js"),
-        meta(charset := "UTF-8")
+        meta(charset := "UTF-8"),
+        meta(
+          name := "viewport",
+          attr("content") := "width=device-width, initial-scale=1"
+        )
       ),
       body(
         div(
-          cls := "d-flex justify-content-center flex-fill flex-grow",
+          cls := "wrapper",
           div(
-            cls := "container",
-            div(
-              cls := "row",
-              div(
-                cls := "col-3 sidebar",
-                h2(a(href := linker.root, "Indoor Vivants")),
-                hr,
-                about,
-                staticNav,
-                h4("projects"),
-                projectsNav,
-                hr,
-                h4("tags"),
-                tagCloud(tags),
-                navigation match {
-                  case Some(value) => div(hr, h4("posts"), Nav(value))
-                  case None        => div()
-                }
-              ),
-              div(cls := "col-8 contentside", content)
-            )
-          )
+            cls := "sidebar",
+            h2(a(href := linker.root, "Indoor Vivants")),
+            hr,
+            about,
+            staticNav,
+            h4("projects"),
+            projectsNav,
+            hr,
+            h4("tags"),
+            tagCloud(tags),
+            navigation match {
+              case Some(value) => div(hr, h4("posts"), Nav(value))
+              case None        => div()
+            }
+          ),
+          tag("article")(cls := "content-wrapper", content)
         )
       )
     )
@@ -139,18 +136,14 @@ class Template(linker: Linker, tags: Iterable[TagPage]) {
       blogPost: BlogPost
   ) = {
     div(
-      cls := "card",
+      cls := "blog-card",
       div(
-        cls := "card-body",
-        h5(
-          cls := "card-title",
+        cls := "blog-card-body",
+        div(
+          cls := "blog-card-title",
           a(href := linker.resolve(blogPost), blogPost.title)
         ),
-        p(cls := "card-text", blogPost.description),
-        div(
-          cls := "card-text",
-          small(dateFormat(blogPost.date))
-        )
+        p(cls := "blog-card-text", blogPost.description)
       )
     )
   }
@@ -207,7 +200,7 @@ class Template(linker: Linker, tags: Iterable[TagPage]) {
   def projectsNav =
     div(
       a(
-        "Subatomic - static site generator",
+        "Subatomic - barely a static site generator",
         href := "https://subatomic.indoorvivants.com/"
       )
     )

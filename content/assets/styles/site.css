@@ -1,19 +1,29 @@
 /* https://coolors.co/0a0908-22333b-eae0d5-c6ac8f-5e503f */
 
+body {
+    font-family: sans-serif;
+    font-size  : 16px;
+}
+
+a {
+    text-decoration: none;
+}
+
 span.blog-tag {
-    margin: 3px;
+    margin          : 3px;
     background-color: #d6d6d6;
-    padding: 6px;
-    color: black;
-    border-width: 1px 1px 1px 5px;
-    border-color: black;
-    border-style: solid;
-    display: inline-block;
+    padding         : 6px;
+    color           : black;
+    border-width    : 1px 1px 1px 5px;
+    border-color    : black;
+    border-style    : solid;
+    display         : inline-block;
 }
 
 span.blog-tag>a {
     color: black;
 }
+
 span.blog-tag>a:hover {
     color: black;
 }
@@ -31,28 +41,128 @@ img {
     max-width: 100%;
 }
 
+html,
 body {
-    background-color: #22333b;
+    height: 100%;
 }
 
-div.sidebar {
-    padding-top:30px;
-    color: #c6ac8F;
-    height: 100%;
+body {
+    background-color: #22333b;
+    height          : 100%;
 }
 
 div.sidebar a {
     color: #eae0d5;
-
 }
+
 
 div.sidebar a:hover {
     color: #eae0d5;
 }
 
 
-div.contentside {
+article.content-wrapper {
     background-color: #eae0d5;
-    padding-top: 30px;
-    height:100%;
+    height          : 100% auto;
+
+    text-align: justify;
+    color     : #0A0908;
+}
+
+div.sidebar {
+    background-color: #22333b;
+    color           : #c6ac8f;
+}
+
+div.blog-card {
+    margin : 10px;
+    width  : 350px;
+    display: inline-flex;
+}
+
+div.blog-card div.blog-card-title {
+    padding   : 10px;
+    background: #436475;
+    color     : white;
+    text-align: left;
+}
+
+div.blog-card-title a {
+    font-size      : 22px;
+    font-weight    : bold;
+    text-decoration: none;
+    color          : white;
+}
+
+article.content-wrapper code {
+    border-radius   : 5px;
+    background-color: #23241f;
+    padding         : 2px;
+    color           : white;
+}
+
+article.content-wrapper {
+    font-size: 19px;
+}
+
+article.content-wrapper code.hljs {
+    padding: 10px;
+}
+
+
+
+/* Wide screen */
+@media screen and (min-device-width: 1200px) {
+
+    div.wrapper {
+        flex-direction       : row;
+        margin               : 30px;
+        display              : grid;
+        grid-template-columns: minmax(10px, 2fr) minmax(10px, 5fr);
+        gap                  : 3rem;
+        background-color     : #eae0d5;
+        max-width            : 80%;
+        width                : 80%;
+    }
+
+    div.sidebar {
+        flex-shrink: 0;
+        flex-grow  : 0;
+    }
+
+    article.content-wrapper {
+        flex-grow    : 0;
+        flex-shrink  : 0;
+        padding-right: 30px;
+    }
+
+
+}
+
+/* Portrait */
+@media screen and (max-device-width: 400px) and (orientation: portrait) {
+
+    div.wrapper {
+        display       : flex;
+        flex-direction: column;
+        width         : 100%;
+        max-width     : 100%;
+    }
+
+    article.content-wrapper {
+        padding    : 10px;
+        order      : 0;
+        flex-shrink: 0;
+        flex-grow  : 0;
+        max-width  : 100%;
+
+    }
+
+    div.sidebar {
+        padding    : 10px;
+        order      : 1;
+        flex-shrink: 0;
+        flex-grow  : 0;
+
+    }
 }
