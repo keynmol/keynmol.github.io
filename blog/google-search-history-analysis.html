@@ -1,4 +1,4 @@
-<html><head><title>Anton Sviridov: Google search history analysis</title><link rel="stylesheet" href="/assets/styles/monokai-sublime.min.css" /><link rel="stylesheet" href="/assets/styles/bootstrap.min.css" /><link rel="stylesheet" href="/assets/styles/site.css" /><script src="/assets/scripts/highlight.min.js"></script><script src="/assets/scripts/r.min.js"></script><script src="/assets/scripts/scala.min.js"></script><script src="/assets/scripts/blog.js"></script><meta charset="UTF-8" /></head><body><div class="d-flex justify-content-center flex-fill flex-grow"><div class="container"><div class="row"><div class="col-3 sidebar"><h2><a href="/">Indoor Vivants</a></h2><hr /><div><strong>Anton Sviridov</strong><p>I love reinventing the wheel and I usually use Scala for that.</p></div><ul><li><a href="https://github.com/keynmol/">Github (personal)</a></li><li><a href="https://twitter.com/velvetbaldmime/">Tweettor</a></li></ul><h4>projects</h4><div><a href="https://subatomic.indoorvivants.com/">Subatomic - static site generator</a></div><hr /><h4>tags</h4><div><span><a href="/tags/data-analysis.html"><small>data-analysis</small></a> </span><span><a href="/tags/ggplot2.html"><small>ggplot2</small></a> </span><span><a href="/tags/stocks.html"><small>stocks</small></a> </span><span><a href="/tags/python.html"><small>python</small></a> </span><span><a href="/tags/R.html"><small>R</small></a> </span></div><div><hr /><h4>posts</h4><div><p><strong>Google search history analysis</strong></p><p><a href="/blog/visualising-time-series.html">Visualising timeseries: stocks data and global trends</a></p></div></div></div><div class="col-8 contentside"><div><h2>Google search history analysis</h2><p><span class="blog-tag"><a href="/tags/stocks.html"><small>stocks</small></a></span><span class="blog-tag"><a href="/tags/ggplot2.html"><small>ggplot2</small></a></span><span class="blog-tag"><a href="/tags/data-analysis.html"><small>data-analysis</small></a></span><span class="blog-tag"><a href="/tags/python.html"><small>python</small></a></span><span class="blog-tag"><a href="/tags/R.html"><small>R</small></a></span></p><hr /><div><h2>Introduction</h2>
+<html><head><title>Anton Sviridov: Google search history analysis</title><link rel="stylesheet" href="/assets/styles/monokai-sublime.min.css" /><link rel="stylesheet" href="/assets/styles/site.css" /><script src="/assets/scripts/highlight.min.js"></script><script src="/assets/scripts/r.min.js"></script><script src="/assets/scripts/scala.min.js"></script><script src="/assets/scripts/blog.js"></script><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /></head><body><div class="wrapper"><div class="sidebar"><h2><a href="/">Indoor Vivants</a></h2><hr /><div><strong>Anton Sviridov</strong><p>I love reinventing the wheel and I usually use Scala for that.</p></div><ul><li><a href="https://github.com/keynmol/">Github (personal)</a></li><li><a href="https://twitter.com/velvetbaldmime/">Tweettor</a></li></ul><h4>projects</h4><div><a href="https://subatomic.indoorvivants.com/">Subatomic - barely a static site generator</a></div><hr /><h4>tags</h4><div><span><a href="/tags/data-analysis.html"><small>data-analysis</small></a> </span><span><a href="/tags/ggplot2.html"><small>ggplot2</small></a> </span><span><a href="/tags/stocks.html"><small>stocks</small></a> </span><span><a href="/tags/python.html"><small>python</small></a> </span><span><a href="/tags/R.html"><small>R</small></a> </span></div><div><hr /><h4>posts</h4><div><p><strong>Google search history analysis</strong></p><p><a href="/blog/visualising-time-series.html">Visualising timeseries: stocks data and global trends</a></p></div></div></div><article class="content-wrapper"><div><h2>Google search history analysis</h2><p><span class="blog-tag"><a href="/tags/stocks.html"><small>stocks</small></a></span><span class="blog-tag"><a href="/tags/ggplot2.html"><small>ggplot2</small></a></span><span class="blog-tag"><a href="/tags/data-analysis.html"><small>data-analysis</small></a></span><span class="blog-tag"><a href="/tags/python.html"><small>python</small></a></span><span class="blog-tag"><a href="/tags/R.html"><small>R</small></a></span></p><hr /><div><h2>Introduction</h2>
 <p>A man is defined not by the way he looks, but what he looks for. And these days it is exceptionally easy to find out, what you're looking for – Google provides access to your search history starting from a certain point in time which is probably different for everyone (my archive started from 2011 though it goes without saying that I've been using Google long before that). And while in different periods of my life I have found myself googling some <strong>really weird shit</strong> (like, really weird, from the depths of underwebs), I decided to rely on the safety of large numbers and post the results of this trip down the memory lane no matter what kind of deviation they shall display.</p>
 <p>This doesn't serve any scientific purpose, it's more of a demonstration of the use of fantastic packages R can offer, applied to a dataset from a real world. This is not a tutorial on R language or aforementioned packages per se, but rather a primer of their usage in real (well, almost) world.</p>
 <p>It's a well-known fact, that 70%-90% of data scientist's time is spent shaping the data into shape needed for exploratory analysis. And whilst there's no upper-boundary on the dirtiness of data (some things I've seen still keep me awake at night, especially in publicly available governmental datasets), this data will be somewhere in the bottom 10% percentile – most of the time is spent massaging the data, which is more fun than cleaning it and battling with missing values.</p>
@@ -35,49 +35,49 @@
 ...
 </code></pre>
 <p>Timestamps are in microseconds, but we don't need this kind of precision, so we can safely trim last 6 digits and get a regular UNIX timestamp that R can understand. Also, each query can be associated with several <code>id</code>s, each having a different timestamp – to my understanding, this groups image searches. We'll ignore that and just take the minimum of timestamps (or we could take the first one).</p>
-<p>Given that the idea of working with multiple (!) JSON (!!) files (!!!) and R gives me shivers (my knowledge of available packages is probably severely outdated), I wrote a tiny Python script that converts everything into a nice flat csv dataset:</p>
+<p>Given that the idea of working with multiple(!) JSON(!!) files(!!!) and R gives me shivers (my knowledge of available packages is probably severely outdated), I wrote a tiny Python script that converts everything into a nice flat csv dataset:</p>
 <pre><code class="language-python">import sys
 import json
 import glob
 import os.path
 import csv
 
-if (len (sys.argv) &lt; 2):
-    exit (&quot;Usage: create_dataset.py searches_folder&quot;)
+if(len(sys.argv) &lt; 2):
+    exit(&quot;Usage: create_dataset.py searches_folder&quot;)
 
 fold = sys.argv[1]
 
-writer = csv.DictWriter (sys.stdout, fieldnames=[&quot;Timestamp&quot;, &quot;Query&quot;], quoting=csv.QUOTE_NONNUMERIC)
-writer.writeheader ()
+writer = csv.DictWriter(sys.stdout, fieldnames=[&quot;Timestamp&quot;, &quot;Query&quot;], quoting=csv.QUOTE_NONNUMERIC)
+writer.writeheader()
 
 # scan all json files in the folder
-for queries_file in glob.glob (os.path.join (fold, &quot;*.json&quot;)):
+for queries_file in glob.glob(os.path.join(fold, &quot;*.json&quot;)):
     # load json
-    with open (queries_file) as f:
-        queries = json.load (f)
+    with open(queries_file) as f:
+        queries = json.load(f)
 
     for query in queries[&quot;event&quot;]:
         query=query[&quot;query&quot;]
         # extract timestamp with removed microseconds
-        timestamp = min (int (query_id[&quot;timestamp_usec&quot;][0:-6]) for query_id in query[&quot;id&quot;])
-        writer.writerow ({&quot;Timestamp&quot;: timestamp, &quot;Query&quot;: query[&quot;query_text&quot;]})
+        timestamp = min(int(query_id[&quot;timestamp_usec&quot;][0:-6]) for query_id in query[&quot;id&quot;])
+        writer.writerow({&quot;Timestamp&quot;: timestamp, &quot;Query&quot;: query[&quot;query_text&quot;]})
 </code></pre>
-<p>After running this script on the folder with extracted JSON files, we will have a csv file with two columns: timestamp and query. Buckle up, we're going on an adventuR (sorry). Fire up your R console, or RStudio (if you still don't use it, you need to stop here for a moment and rethink your life priorities).</p>
+<p>After running this script on the folder with extracted JSON files, we will have a csv file with two columns: timestamp and query. Fire up your R console, or RStudio(if you still don't use it, you need to stop here for a moment and rethink your life priorities).</p>
 <h2>Preparing data</h2>
 <p>First, let's establish a portal to <a href="http://adolfoalvarez.cl/the-hitchhikers-guide-to-the-hadleyverse/">Hadleyverse</a>:</p>
-<pre><code class="language-r">library (dplyr) # general data wrangling, tbl_df, %&gt;% operator
-library (stringr) # query tokenization
-library (lubridate) # could be omitted, really, but I do love it too much
-library (ggplot) # beautiful plots
+<pre><code class="language-r">library(dplyr) # general data wrangling, tbl_df, %&gt;% operator
+library(stringr) # query tokenization
+library(lubridate) # could be omitted, really, but I do love it too much
+library(ggplot) # beautiful plots
 </code></pre>
 <p>If you don't have any of those packages, install them, they are guaranteed to transform the way you see data analysis, both in R and in general. Let's load our dataset and have a first look at it:</p>
 <pre><code class="language-r"># immediately convert it do tbl_df for pretty printing
-&gt; ds &lt;- tbl_df (read.csv (&quot;dataset.csv&quot;, stringsAsFactors = F))
-# convert integer timestamp to R's native datetime object (POSIXct)
-&gt; ds$TimeStamp &lt;- as.POSIXct (ds$Timestamp, origin = &quot;1970-01-01&quot;)
+&gt; ds &lt;- tbl_df(read.csv(&quot;dataset.csv&quot;, stringsAsFactors = F))
+# convert integer timestamp to R's native datetime object(POSIXct)
+&gt; ds$TimeStamp &lt;- as.POSIXct(ds$Timestamp, origin = &quot;1970-01-01&quot;)
 
 # print some rows starting from the most recent queries
-&gt; ds %&gt;% arrange (desc (TimeStamp))
+&gt; ds %&gt;% arrange(desc(TimeStamp))
 Source: local data frame [35,328 x 3]
 
     Timestamp             Query           TimeStamp
@@ -99,21 +99,21 @@ Source: local data frame [35,328 x 3]
 <p>So let's take a look at the code that generates the plot with <a href="http://mathworld.wolfram.com/CumulativeSum.html">cumulative sums</a> of number of queries in each language per month. This will demonstrate the power and, even more importantly, the readability of the methods, provided by Hadleyverse's packages:</p>
 <pre><code class="language-r">&gt; language_usage_plot &lt;- ds %&gt;%
         # we group all queries by the month and calculate the counts below in that month
-        group_by (Month=round_date (TimeStamp, &quot;month&quot;)) %&gt;%  # round each timestamp to the month it falls in
-        summarise (Russian=sum (str_detect (Query, &quot;[а-яА-я]&quot;)), # count Russian queries
-                  English=sum (str_detect (Query, &quot;[a-zA-Z]&quot;))) %&gt;% # count English characters
+        group_by(Month=round_date(TimeStamp, &quot;month&quot;)) %&gt;%  # round each timestamp to the month it falls in
+        summarise(Russian=sum(str_detect(Query, &quot;[а-яА-я]&quot;)), # count Russian queries
+                  English=sum(str_detect(Query, &quot;[a-zA-Z]&quot;))) %&gt;% # count English characters
         ungroup %&gt;%
-        gather (Language, Queries, -Month) %&gt;% # see notes below
-        group_by (Language) %&gt;%
-        arrange (Month) %&gt;% # order is important for cumsum to make sense
-        mutate (&quot;Number of queries&quot; = cumsum (Queries)) %&gt;% # will sum them across months in the Language group
+        gather(Language, Queries, -Month) %&gt;% # see notes below
+        group_by(Language) %&gt;%
+        arrange(Month) %&gt;% # order is important for cumsum to make sense
+        mutate(&quot;Number of queries&quot; = cumsum(Queries)) %&gt;% # will sum them across months in the Language group
         ungroup %&gt;%
-        ggplot (aes (Month, `Number of queries`, colour=Language)) +
-          geom_line ()
+        ggplot(aes(Month, `Number of queries`, colour=Language)) +
+          geom_line()
 
 </code></pre>
 <p>Notes:</p>
-<pre><code class="language-r">gather (Language, Queries, -Month)
+<pre><code class="language-r">gather(Language, Queries, -Month)
 </code></pre>
 <p>This is a very important step, which converts data in wide format:</p>
 <pre><code class="language-bash">Source: local data frame [54 x 3]
@@ -142,16 +142,16 @@ Source: local data frame [35,328 x 3]
 <h2>Tokenizing queries</h2>
 <p>With that out of the way, let's do something slightly more entertaining – express my life in trends and topics without defining them manually. We will use word tokens as topics. So let's break down each query into a list of words:</p>
 <pre><code class="language-r">words_index &lt;- ds %&gt;%
-  group_by (Query, TimeStamp) %&gt;% # treat repeated queries as separate entities to have more consistent counts
-  do (data_frame (Word = tolower (unlist (str_extract_all (.$Query, &quot; ([a-zA-Zа-яA-Я']+)&quot;))))) %&gt;% # see notes below
+  group_by(Query, TimeStamp) %&gt;% # treat repeated queries as separate entities to have more consistent counts
+  do(data_frame(Word = tolower(unlist(str_extract_all(.$Query, &quot;([a-zA-Zа-яA-Я']+)&quot;))))) %&gt;% # see notes below
   ungroup
 </code></pre>
 <p>The line</p>
-<pre><code class="language-r">  do (data_frame (Word = tolower (unlist (str_extract_all (.$Query, &quot; ([a-zA-Zа-яA-Я']+)&quot;))))) %&gt;% # see notes below
+<pre><code class="language-r">  do(data_frame(Word = tolower(unlist(str_extract_all(.$Query, &quot;([a-zA-Zа-яA-Я']+)&quot;))))) %&gt;% # see notes below
 </code></pre>
 <p>makes use of <a href="https://github.com/hadley/dplyr#do">dplyr's do</a> method that provides a convenient method for running an arbitrary computation on a group of rows. In our particular case we merely extract all sequences of cyrillic and latin characters (note the apostrophe to avoid extracting &quot;s&quot; from &quot;it's&quot; and other similar cases). Then we <a href="https://stat.ethz.ch/R-manual/R-devel/library/base/html/unlist.html">unlist</a> the nested structure to get a plain vector of words which will then be added to the modified group (with all words in lower case).</p>
 <p>It's worth noting, that this operation takes a suprising amount of time (about a minute) for such a small dataset. Especially when extraction itself is rather fast:</p>
-<pre><code class="language-r">&gt; system.time (X &lt;- tolower (unlist (str_extract_all (ds$Query, &quot; ([a-zA-Zа-яA-Я']+)&quot;))))
+<pre><code class="language-r">&gt; system.time(X &lt;- tolower(unlist(str_extract_all(ds$Query, &quot;([a-zA-Zа-яA-Я']+)&quot;))))
    user  system elapsed
   1.863   0.046   1.935
 </code></pre>
@@ -159,7 +159,7 @@ Source: local data frame [35,328 x 3]
 <p>The general rule is to create the most obvious and readable solution first, and then optimise it bit by bit, should it prove necessary.</p>
 <h2>Words ranking and Zipf's law</h2>
 <p>Back to words. Let's look at the rankings:</p>
-<pre><code class="language-r">&gt; words_index %&gt;% count (Word) %&gt;% arrange (desc (n))
+<pre><code class="language-r">&gt; words_index %&gt;% count(Word) %&gt;% arrange(desc(n))
 Source: local data frame [21,390 x 2]
 
      Word    n
@@ -178,12 +178,12 @@ Source: local data frame [21,390 x 2]
 <p>What &quot;the&quot;..? Not good. Let's filter out the stopwords. Gladly, R handles URLs better than any language:</p>
 <pre><code class="language-r"># download a list of stopwords
 &gt; stopwords &lt;-
-suppressWarnings (readLines (
+suppressWarnings(readLines(
   &quot;http://xpo6.com/wp-content/uploads/2015/01/stop-word-list.txt&quot;
 ))
 # filter our index
-&gt; words_index &lt;- words_index %&gt;% filter (! (Word %in% stopwords))
-&gt; words_index %&gt;% count (Word) %&gt;% arrange (desc (n))
+&gt; words_index &lt;- words_index %&gt;% filter(!(Word %in% stopwords))
+&gt; words_index %&gt;% count(Word) %&gt;% arrange(desc(n))
 Source: local data frame [21,157 x 2]
 
      Word    n
@@ -200,65 +200,65 @@ Source: local data frame [21,157 x 2]
 </code></pre>
 <p>Much better now. One look at the numbers suggests the kind of distribution I used to see al the time during my relatively brief experience with Information Retrieval - Zipf law. Let's take a closer look at it:</p>
 <pre><code class="language-r">&gt; word_rank_plot &lt;- words_index %&gt;%
-    count (Word) %&gt;% # see code above
-    top_n (100, n) %&gt;% # take top 100 words
-    ggplot (aes (dense_rank (-n), n)) + # we use dense_rank (-n) to get rank (possibly repeated) for each word
-      geom_line () + xlab (&quot;Word rank&quot;) +
-      ylab (&quot;Number of queries&quot;) +
-      scale_x_continuous (breaks = seq (0, 100, by = 5)) +
-      geom_text (aes (
+    count(Word) %&gt;% # see code above
+    top_n(100, n) %&gt;% # take top 100 words
+    ggplot(aes(dense_rank(-n), n)) + # we use dense_rank(-n) to get rank(possibly repeated) for each word
+      geom_line() + xlab(&quot;Word rank&quot;) +
+      ylab(&quot;Number of queries&quot;) +
+      scale_x_continuous(breaks = seq(0, 100, by = 5)) +
+      geom_text(aes(
         label = Word,
-        alpha = log (100 / dense_rank (-n)),
+        alpha = log(100 / dense_rank(-n)),
         hjust = -0.8 # log to make colour fade slower
       ), show_guide = F) + # don't show legend for alpha
-      geom_point () +
-      ggtitle (&quot;Word rank&quot;)
+      geom_point() +
+      ggtitle(&quot;Word rank&quot;)
 </code></pre>
 <p>This is a relatively simple plot that doesn't use too many of the ideas we haven't used before. And this is what it looks like:</p>
 <p><img src="/assets/google-searches/word-ranks.png" alt="Words ranking and Zipf's law" /></p>
-<p>Just as suspected! This looks like a perfect example of <a href="http://en.wikipedia.org/wiki/Zipf%27s_law">Zipf's law</a>, the kind of plot you usually see in the books (or log-log plot, but it's boring).</p>
-<p>The interesting thing about this finding is that even on such small dataset with short queries, the law, which is supposed to hold for English language, still shines through. Even though &quot;the&quot; is only in second place - but this can be easily explained by the fact that any person familiar with how search engines work will usually omit this and other stopwords from the query as they bear little or no significance on results (with exceptions, for example &quot;the who&quot; vs. &quot;who&quot;).</p>
+<p>Just as suspected! This looks like a perfect example of <a href="http://en.wikipedia.org/wiki/Zipf%27s_law">Zipf's law</a>, the kind of plot you usually see in the books(or log-log plot, but it's boring).</p>
+<p>The interesting thing about this finding is that even on such small dataset with short queries, the law, which is supposed to hold for English language, still shines through. Even though &quot;the&quot; is only in second place - but this can be easily explained by the fact that any person familiar with how search engines work will usually omit this and other stopwords from the query as they bear little or no significance on results(with exceptions, for example &quot;the who&quot; vs. &quot;who&quot;).</p>
 <h2>Trends and topics</h2>
 <p>Now, let's do slightly more plotting - I have a sucpicion that the changes in my development stack were greatly affected by two events – moving to London to study and getting a job there a year later. I will demonstrate that change in the best way possible (subjective, of course), and then explain why those changes happened. But you can safely skip the explanation if you're not interested in my life. There is no quiz at the end, don't worry. Or is there?</p>
-<p>We will take six of the top ranking words and plot their usage over time, identifying a couple of notable dates (guess what I'm going to call this variable). First, notable dates and top words:</p>
+<p>We will take six of the top ranking words and plot their usage over time, identifying a couple of notable dates(guess what I'm going to call this variable). First, notable dates and top words:</p>
 <pre><code class="language-r"># did you guess right?
-notable_dates &lt;- data_frame (NotableDate = c (ymd (&quot;2013-09-16&quot;), ymd (&quot;2014-09-01&quot;)),
-                            WhyNotable = c (&quot;Moved to London&quot;, &quot;Started new job&quot;))
+notable_dates &lt;- data_frame(NotableDate = c(ymd(&quot;2013-09-16&quot;), ymd(&quot;2014-09-01&quot;)),
+                            WhyNotable = c(&quot;Moved to London&quot;, &quot;Started new job&quot;))
 # getting top 6 words, see notes below
-top_words &lt;- words_index %&gt;% count (Word) %&gt;% top_n (6, n) %&gt;% .$Word
+top_words &lt;- words_index %&gt;% count(Word) %&gt;% top_n(6, n) %&gt;% .$Word
 </code></pre>
 <p>The most interesting thing about the last line is <code>.$Word</code> - which is my personal favourite for extracting one column from the result of dplyr's pipeline. As you might have seen above, <code>.</code> has a special meaning in dplyr's pipeline - it represents data frame of current group. Without grouping it contains the entire dataset, and we use familiar <code>$</code> to get one column from it.</p>
 <p>Next, to the plot itself. It's not complicated at all, most of the lines are actually for customisation purposes:</p>
 <pre><code class="language-r">notable_dates_plot &lt;- words_index %&gt;%
-  filter (Word %in% top_words) %&gt;%
-  ggplot (aes (TimeStamp, fill = Word)) +
-  geom_vline (aes (xintercept = as.numeric (NotableDate), # see notes below
+  filter(Word %in% top_words) %&gt;%
+  ggplot(aes(TimeStamp, fill = Word)) +
+  geom_vline(aes(xintercept = as.numeric(NotableDate), # see notes below
                  colour = WhyNotable),
              size = 2, show_guide = T,
              notable_dates) +
-  geom_histogram (colour = &quot;gray0&quot;) +
-  facet_wrap (~Word, scales = &quot;free_y&quot;) +
-  scale_x_datetime (&quot;Date&quot;, breaks = date_breaks (&quot;6 months&quot;), # thanks to &quot;scales&quot; package, we can use those amazing helpers
-                   labels=date_format (&quot;%b, %Y&quot;)) +
-  scale_fill_discrete (&quot;Word&quot;) +
-  scale_colour_manual (&quot;Notable dates&quot;, values = c (&quot;red&quot;, &quot;orange&quot;)) +
-  ylab (&quot;Number of queries&quot;) +
-  theme (axis.text.x=element_text (angle=45), # see ggplot's help pages for information about theme's parameters
-        legend.text=element_text (size=14),
-        strip.text=element_text (size=14)) +
+  geom_histogram(colour = &quot;gray0&quot;) +
+  facet_wrap(~Word, scales = &quot;free_y&quot;) +
+  scale_x_datetime(&quot;Date&quot;, breaks = date_breaks(&quot;6 months&quot;), # thanks to &quot;scales&quot; package, we can use those amazing helpers
+                   labels=date_format(&quot;%b, %Y&quot;)) +
+  scale_fill_discrete(&quot;Word&quot;) +
+  scale_colour_manual(&quot;Notable dates&quot;, values = c(&quot;red&quot;, &quot;orange&quot;)) +
+  ylab(&quot;Number of queries&quot;) +
+  theme(axis.text.x=element_text(angle=45), # see ggplot's help pages for information about theme's parameters
+        legend.text=element_text(size=14),
+        strip.text=element_text(size=14)) +
 </code></pre>
-<p>The peculiar construct in <code>geom_vline</code>, <code>xintercept = as.numeric (NotableDate)</code> is required because internally time objects are represented as integers, therefore ggplot will expect xintercept to be of the same type, as the underlying scale. I find this feature (or bug) somewhat annoying, as I always forget the reason for the error message it produces.</p>
+<p>The peculiar construct in <code>geom_vline</code>, <code>xintercept = as.numeric(NotableDate)</code> is required because internally time objects are represented as integers, therefore ggplot will expect xintercept to be of the same type, as the underlying scale. I find this feature(or bug) somewhat annoying, as I always forget the reason for the error message it produces.</p>
 <p>We don't do much sophisticated processing here, instead we try to arrange the information on the plot in condensed manner, but so it still shows the underlying patterns in data.</p>
 <p><img src="/assets/google-searches/top-usage.png" alt="Top terms usage" /></p>
 <p>And here it is. The year between moving to London and starting a job was the year I was getting my Master's degree.</p>
 <h2>Conclusion</h2>
 <p>Personal notes (the ones you can actually skip):</p>
 <ol>
-<li>Increasing usage of Python right before getting a job (my MSc project was about neural networks and all the simulations were done in Python, there was only 5 days between submission and starting the job).</li>
+<li>Increasing usage of Python right before getting a job(my MSc project was about neural networks and all the simulations were done in Python, there was only 5 days between submission and starting the job).</li>
 <li>Drop in Ruby usage until right before submitting the paper – it's in this time that I wrote (and abandoned) <a href="https://github.com/keynmol/octane">octane</a> to aid me in visualising what the hell was going on in those bloody neural networks. Before moving to London Ruby was my main go-to language and a centerpiece of my work stack.</li>
 <li>Increased interest in London right after getting the job - more money meant more entertainment opportunities.</li>
 <li>Interestingly similar patterns in &quot;chords&quot; and &quot;lyrics&quot; over the months spent at university. I guess there was too much drinking going on in the beginning, and then too much writing at the end.</li>
 </ol>
 <p>Thanks for getting this far!</p>
-<p>The code for producing all of those plots is available on <a href="https://github.com/keynmol/keynmol.github.io/tree/master/code/google-searches/">blog's github</a>, just feed it your own data and it probably won't explode (I take no responsbility, but you can <a href="mailto:keynmol@gmail.com">email me</a>)</p>
-</div></div></div></div></div></div></body></html>
+<p>The code for producing all of those plots is available on <a href="https://github.com/keynmol/keynmol.github.io/tree/master/code/google-searches/">blog's github</a>, just feed it your own data and it probably won't explode(I take no responsbility, but you can <a href="mailto:keynmol@gmail.com">email me</a>)</p>
+</div></div></article></div></body></html>
