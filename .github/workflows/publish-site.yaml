@@ -16,7 +16,7 @@ jobs:
           ammonite-version: 2.2.0
           scala-version: 2.13
       - name: Build
-        run: amm blog.sc
+        run: amm blog.sc --destination ${PWD}/_site --overwrite
       - name: Publish gh-pages
         uses: peaceiris/actions-gh-pages@v3
         with:

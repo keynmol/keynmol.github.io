@@ -1,3 +1,10 @@
+---
+title: Google search history analysis
+date: 2015-05-31
+tags: R,python,data-analysis,stocks,ggplot2
+archived: true
+---
+
 ## Introduction
 A man is defined not by the way he looks, but what he looks for. And these days it is exceptionally easy to find out, what you're looking for – Google provides access to your search history starting from a certain point in time which is probably different for everyone (my archive started from 2011 though it goes without saying that I've been using Google long before that). And while in different periods of my life I have found myself googling some **really weird shit** (like, really weird, from the depths of underwebs), I decided to rely on the safety of large numbers and post the results of this trip down the memory lane no matter what kind of deviation they shall display.
 

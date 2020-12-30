@@ -1,3 +1,9 @@
+---
+title: Visualising timeseries: stocks data and global trends
+date: 2015-06-10
+tags: R,python,data-analysis,ggplot2
+archived: true
+---
 
 ## Introduction
 

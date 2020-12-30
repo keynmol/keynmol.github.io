@@ -76,7 +76,7 @@ div.sidebar {
 
 div.blog-card {
     margin : 10px;
-    width  : 350px;
+    width  : 400px;
     display: inline-flex;
 }
 
@@ -133,7 +133,7 @@ article.content-wrapper code.hljs {
     article.content-wrapper {
         flex-grow    : 0;
         flex-shrink  : 0;
-        padding-right: 30px;
+        padding      : 10px;
     }
 
 
