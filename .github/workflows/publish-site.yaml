@@ -15,7 +15,7 @@ jobs:
         with:
           apps: ammonite
       - name: Build
-        run: ammonite blog.sc --destination ${PWD}/_site --overwrite
+        run: ./ammonite blog.sc --destination ${PWD}/_site --overwrite
       - name: Publish gh-pages
         uses: peaceiris/actions-gh-pages@v3
         with:
