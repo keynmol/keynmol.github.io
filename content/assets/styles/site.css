@@ -118,8 +118,8 @@ article.content-wrapper code.hljs {
         flex-direction       : row;
         margin               : 30px;
         display              : grid;
-        grid-template-columns: minmax(10px, 2fr) minmax(10px, 5fr);
-        gap                  : 3rem;
+        grid-template-columns: minmax(10px, 1fr) minmax(10px, 5fr);
+        gap                  : 1rem;
         background-color     : #eae0d5;
         max-width            : 80%;
         width                : 80%;
@@ -165,4 +165,8 @@ article.content-wrapper code.hljs {
         flex-grow  : 0;
 
     }
+}
+
+div.searchContainer a {
+	color: darkslategrey;
 }

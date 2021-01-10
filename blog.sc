@@ -1,4 +1,4 @@
-import $ivy.`com.indoorvivants::subatomic-builders:0.0.4`
+import $ivy.`com.indoorvivants::subatomic-builders:0.0.5`
 import subatomic.builders.blog._
 import subatomic.builders._
 import subatomic._
@@ -19,9 +19,9 @@ def main(args: String*) = {
         links = Vector(
           "Github"   -> "https://github.com/keynmol",
           "Tweettor" -> "https://twitter.com/velvetbaldmime"
-          // "Subatomic - barely a static site generator" -> "https://subatomic.indoorvivants.com/"
+          /* "Subatomic - barely a static site generator" -> "https://subatomic.indoorvivants.com/" */
         ),
-        highlightJS = Highlight.default
+        highlightJS = HighlightJS.default
           .copy(
             languages = List("scala", "r"),
             theme = "monokai-sublime"
