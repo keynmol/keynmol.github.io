@@ -1,3 +1,4 @@
+import $repo.`https://oss.sonatype.org/content/repositories/snapshots/`
 import $ivy.`com.indoorvivants::subatomic-builders:0.0.5+18-60696667-SNAPSHOT`
 import subatomic.builders.blog._
 import subatomic.builders._
